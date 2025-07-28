@@ -1,5 +1,5 @@
 import { useUsersUI } from '@/stores/users-ui-store'
-import { UserCreateDialog } from './dialogs/user-create-dialog'
+import { UserCreateDialog } from './dialogs/users-create-dialog'
 import { UserEditDialog } from './dialogs/user-edit-dialog'
 
 export function UsersDialogs() {

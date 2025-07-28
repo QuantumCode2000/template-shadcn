@@ -2,6 +2,7 @@ import {
   IconBarrierBlock,
   IconBrowserCheck,
   IconBug,
+  IconBuilding,
   IconChecklist,
   IconError404,
   IconHelp,
@@ -22,31 +23,33 @@ import {
 import { AudioWaveform, Command, GalleryVerticalEnd } from 'lucide-react'
 import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
+import { type DecodedToken } from '@/lib/jwtUtils'
 
-export const sidebarData: SidebarData = {
-  user: {
-    name: 'satnaing',
-    email: 'satnaingdev@gmail.com',
-    avatar: '/avatars/shadcn.jpg',
-  },
-  teams: [
-    {
-      name: 'Shadcn Admin',
-      logo: Command,
-      plan: 'Vite + ShadcnUI',
+export const getSidebarData = (userInfo?: DecodedToken | null): SidebarData => {
+  return {
+    user: {
+      name: userInfo?.nombre || 'Usuario',
+      email: userInfo?.email || 'No email disponible',
+      avatar: '/avatars/shadcn.jpg',
     },
-    {
-      name: 'Acme Inc',
-      logo: GalleryVerticalEnd,
-      plan: 'Enterprise',
-    },
-    {
-      name: 'Acme Corp.',
-      logo: AudioWaveform,
-      plan: 'Startup',
-    },
-  ],
-  navGroups: [
+    teams: [
+      {
+        name: 'Shadcn Admin',
+        logo: Command,
+        plan: 'Vite + ShadcnUI',
+      },
+      {
+        name: 'Acme Inc',
+        logo: GalleryVerticalEnd,
+        plan: 'Enterprise',
+      },
+      {
+        name: 'Acme Corp.',
+        logo: AudioWaveform,
+        plan: 'Startup',
+      },
+    ],
+    navGroups: [
     {
       title: 'General',
       items: [
@@ -75,6 +78,11 @@ export const sidebarData: SidebarData = {
           title: 'Users',
           url: '/users',
           icon: IconUsers,
+        },
+        {
+          title: 'Empresas',
+          url: '/companies',
+          icon: IconBuilding,
         },
         {
           title: 'Secured by Clerk',
@@ -200,4 +208,8 @@ export const sidebarData: SidebarData = {
       ],
     },
   ],
+  }
 }
+
+// Mantener compatibilidad hacia atrás con una versión estática por defecto
+export const sidebarData: SidebarData = getSidebarData()

@@ -1,7 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
-import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Badge } from '@/components/ui/badge'
 import { TableColumnHeader } from '@/components/table/table-column-header'
 import { User } from '../data/schema'
 import { DataTableRowActions } from './users-actions'
@@ -16,7 +16,7 @@ export const columns: ColumnDef<User>[] = [
           (table.getIsSomePageRowsSelected() && 'indeterminate')
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label='Select all'
+        aria-label='Seleccionar todo'
         className='translate-y-[2px]'
       />
     ),
@@ -24,7 +24,7 @@ export const columns: ColumnDef<User>[] = [
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label='Select row'
+        aria-label='Seleccionar fila'
         className='translate-y-[2px]'
       />
     ),
@@ -32,7 +32,6 @@ export const columns: ColumnDef<User>[] = [
     enableHiding: false,
   },
 
-  // Usuario
   {
     accessorKey: 'usuario',
     header: ({ column }) => (
@@ -41,114 +40,58 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => <div>{row.getValue('usuario')}</div>,
   },
 
-  // Nombre completo
   {
     id: 'nombreCompleto',
     header: ({ column }) => (
       <TableColumnHeader column={column} title='Nombre Completo' />
     ),
     cell: ({ row }) => {
-      const fullName =
-        `${row.original.nombre} ${row.original.paterno} ${row.original.materno || ''}`.trim()
-      return <div>{fullName}</div>
+      const nombre = `${row.original.nombre} ${row.original.apellido}`.trim()
+      return <div>{nombre}</div>
     },
   },
 
-  // Email
   {
     accessorKey: 'email',
-    header: ({ column }) => <TableColumnHeader column={column} title='Email' />,
+    header: ({ column }) => (
+      <TableColumnHeader column={column} title='Email' />
+    ),
     cell: ({ row }) => <div>{row.getValue('email')}</div>,
   },
 
-  // Whatsapp
   {
-    id: 'telefono',
-    header: ({ column }) => (
-      <TableColumnHeader column={column} title='Whatsapp' />
-    ),
-    cell: ({ row }) => {
-      const phone =
-        row.original.whatsapp && row.original.codigo_pais
-          ? `+${row.original.codigo_pais} ${row.original.whatsapp}`
-          : '-'
-      return <div>{phone}</div>
-    },
-    enableSorting: false,
-  },
-
-  // Roles
-  {
-    id: 'roles',
-    header: ({ column }) => <TableColumnHeader column={column} title='Roles' />,
-    cell: ({ row }) => {
-      const roles = (row.original.roles ?? []) as {
-        id: number
-        nombre: string
-      }[]
-      return (
-        <div className='flex flex-wrap gap-1'>
-          {roles.length > 0 ? (
-            roles.map((role, idx) => (
-              <Badge key={`${role.id}-${idx}`} variant='outline'>
-                {role.nombre}
-              </Badge>
-            ))
-          ) : (
-            <span className='text-gray-400'>Sin rol</span>
-          )}
-        </div>
-      )
-    },
-    enableSorting: false,
-  },
-
-  // Estado (badge de color)
-  {
-    accessorKey: 'estado',
+    accessorKey: 'activo',
     header: ({ column }) => (
       <TableColumnHeader column={column} title='Estado' />
     ),
     cell: ({ row }) => {
-      const estadoRaw = row.getValue('estado') as string | null
-      const estado = estadoRaw ?? 'desconocido' // fallback
-
-      const badgeColor =
-        estado?.toLowerCase() === 'activo'
-          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-          : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+      const activo = row.getValue('activo') as boolean
+      const badgeColor = activo
+        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+        : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
 
       return (
         <Badge variant='outline' className={cn('capitalize', badgeColor)}>
-          {estado}
+          {activo ? 'Activo' : 'Inactivo'}
         </Badge>
       )
     },
     filterFn: (row, id, value) => {
-      const v = row.getValue(id) as string | null
-      return v ? value.includes(v) : false
+      const estado = row.getValue(id) as boolean
+      return value.includes(estado ? 'Activo' : 'Inactivo')
     },
   },
 
   {
-    accessorKey: 'updated_at',
+    accessorKey: 'created_at',
     header: ({ column }) => (
-      <TableColumnHeader column={column} title='Actualizado' />
+      <TableColumnHeader column={column} title='Creado' />
     ),
     cell: ({ row }) => {
-      const date = row.original.updated_at
-      return date ? new Date(date).toLocaleDateString() : '-'
-    },
-    sortingFn: 'datetime',
-    enableSorting: true,
-    filterFn: (row, _unused, value) => {
-      const date = row.original.updated_at
-      if (!date || !value) return false
-      return new Date(date).toLocaleDateString().includes(value)
+      const date = new Date(row.getValue('created_at'))
+      return <div>{date.toLocaleDateString()}</div>
     },
   },
-
-  // Acciones (sin cambios)
   {
     id: 'actions',
     cell: ({ row }) => <DataTableRowActions row={row} />,

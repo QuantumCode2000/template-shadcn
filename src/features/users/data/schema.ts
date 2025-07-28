@@ -7,47 +7,17 @@ export const userStatusSchema = z.union([z.literal('active'), z.literal('inactiv
 const userSchema = z.object({
   id: z.string(),
   nombre: z.string().nullable(),
-  paterno: z.string().nullable(),
-  materno: z.string().nullable(),
-  usuario: z.string().nullable(),
-  email: z.string().nullable(),
-  codigo_pais: z.string().nullable(),
-  whatsapp: z.string().nullable(),
-  ci: z.string().nullable(),
-  complemento: z.string().optional().nullable(),
-
-  expedido: z.string().nullable(),
-
-  sexo: userSexSchema,
-  avatar: z.string().optional().nullable(),
-  email_verified_at: z.coerce.date().optional().nullable(),
-  estado: z.boolean(),
-  created_at: z.coerce.date().nullable(),
-  updated_at: z.coerce.date().nullable(),
-  roles: z
-    .array(
-      z.object({
-        id: z.number(),
-        nombre: z.string(),
-      })
-    )
-    .optional(),
-  roles_ids: z.array(z.number()).optional(),
-  avatar_url: z.string().optional(),
-  password: z.string().optional(),
-  password_confirmation: z.string().optional(),
+  apellido: z.string().nullable(),
+  usuario : z.string().nullable(),
+  email: z.string().email().nullable(),
+  activo : z.boolean().nullable(),
 })
 
 // --- El resto de tus esquemas derivados ya no necesitan cambios ---
 
 const newUserSchema = userSchema.omit({
   id: true,
-  created_at: true,
-  updated_at: true,
-  email_verified_at: true,
-  avatar: true,
-  avatar_url: true,
-  estado: true,
+  activo: true,
 })
 
 const updateUserSchema = newUserSchema.partial() // .partial() ya es suficiente
