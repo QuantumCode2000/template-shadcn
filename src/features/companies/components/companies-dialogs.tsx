@@ -1,5 +1,5 @@
 import { useCompaniesUI } from '@/stores/companies-ui-store'
-import { useCompanies } from '@/features/company/context/use-companies'
+import { useCompanies } from '@/features/companies/context/use-companies'
 import { CompanyCreateDialog } from './dialogs/company-create-dialog'
 import { CompanyDeleteDialog } from './dialogs/company-delete-dialog'
 import { CompanyEditDialog } from './dialogs/company-edit-dialog'

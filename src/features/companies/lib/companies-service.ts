@@ -3,14 +3,14 @@ import {
   Company,
   NewCompany,
   CompaniesResponse,
-} from '@/features/company/data/schema'
+} from '@/features/companies/data/schema'
 
 export const companiesApi = {
   // Obtener todas las empresas
   list: async () => {
     const res = await apiService.get<CompaniesResponse>('/empresas')
     if (!res.ok) throw new Error(res.message)
-    return res.data.data.reverse() // Devolver solo el array de empresas
+    return res.data
   },
 
   // Crear una nueva empresa

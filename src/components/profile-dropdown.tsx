@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useRouter } from '@tanstack/react-router'
+import { useAuthStore } from '@/stores/authStore'
+import { decodeToken, type DecodedToken } from '@/lib/jwtUtils'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -12,12 +14,11 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useAuthStore } from '@/stores/authStore'
-import { decodeToken, type DecodedToken } from '@/lib/jwtUtils'
 
 export function ProfileDropdown() {
   const [userInfo, setUserInfo] = useState<DecodedToken | null>(null)
-  const { accessToken, reset } = useAuthStore((state) => state.auth)
+  const { user, accessToken, reset } = useAuthStore((state) => state.auth)
+  console.log('currrentUser', user)
   const router = useRouter()
 
   useEffect(() => {
@@ -39,7 +40,9 @@ export function ProfileDropdown() {
           <Avatar className='h-8 w-8'>
             <AvatarImage src='/avatars/01.png' alt='@shadcn' />
             <AvatarFallback>
-              {userInfo?.nombre ? userInfo.nombre.charAt(0).toUpperCase() : 'SN'}
+              {userInfo?.nombre
+                ? userInfo.nombre.charAt(0).toUpperCase()
+                : 'SN'}
             </AvatarFallback>
           </Avatar>
         </Button>

@@ -4,7 +4,7 @@ import HeaderMain from '@/components/header-main'
 import { Main } from '@/components/layout/main'
 import { TableHeader } from '@/components/table/header/table-header'
 import { TableData } from '@/components/table/table-data'
-import { columns } from './components/users-columns'
+import { columns, CompaniesProvider } from './components/users-columns'
 import { UsersDialogs } from './components/users-dialogs'
 import { useUsers } from './context/use-users'
 // import { UsersDialogType, useUsers } from './context/users-context'
@@ -50,7 +50,7 @@ export default function Users() {
   const { data, isLoading } = useUsers()
   const { setOpen } = useUsersUI()
   return (
-    <>
+    <CompaniesProvider>
       <HeaderMain />
       <Main>
         <TableHeader
@@ -76,6 +76,6 @@ export default function Users() {
         </div>
       </Main>
       <UsersDialogs />
-    </>
+    </CompaniesProvider>
   )
 }

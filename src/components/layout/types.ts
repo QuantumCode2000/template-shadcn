@@ -35,10 +35,24 @@ interface NavGroup {
   items: NavItem[]
 }
 
+interface CompanyInformation {
+  name: string
+  logo: React.ElementType | string
+  plan: string
+}
+
 interface SidebarData {
   user: User
   teams: Team[]
+  companyInformation: CompanyInformation
   navGroups: NavGroup[]
 }
 
-export type { SidebarData, NavGroup, NavItem, NavCollapsible, NavLink }
+export type {
+  SidebarData,
+  NavGroup,
+  NavItem,
+  NavCollapsible,
+  NavLink,
+  CompanyInformation,
+}

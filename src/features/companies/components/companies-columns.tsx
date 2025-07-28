@@ -102,9 +102,9 @@ export const columns: ColumnDef<Company>[] = [
       const ambiente = row.getValue('codigoAmbienteSin') as number
       const ambientes = {
         1: 'Producción',
-        2: 'Pruebas',
-        3: 'Desarrollo',
-        4: 'Capacitación',
+        2: 'Pruebas y Piloto',
+        // 3: 'Desarrollo',
+        // 4: 'Capacitación',
       }
       return (
         <Badge variant='outline'>

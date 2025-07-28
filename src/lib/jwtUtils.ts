@@ -1,5 +1,5 @@
 // src/lib/jwtUtils.ts
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from 'jwt-decode'
 
 export interface DecodedToken {
   id: number
@@ -7,6 +7,7 @@ export interface DecodedToken {
   apellido: string
   usuario: string
   email: string
+  empresaId: number
   iat: number
   exp: number
 }

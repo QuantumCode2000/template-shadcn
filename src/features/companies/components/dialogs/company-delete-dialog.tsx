@@ -8,7 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Company } from '@/features/company/data/schema'
+import { Company } from '@/features/companies/data/schema'
 
 interface CompanyDeleteDialogProps {
   open: boolean

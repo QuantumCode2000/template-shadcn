@@ -1,3 +1,6 @@
+import { useMemo } from 'react'
+import { useAuthStore } from '@/stores/authStore'
+import { decodeToken } from '@/lib/jwtUtils'
 import {
   Sidebar,
   SidebarContent,
@@ -7,26 +10,35 @@ import {
 } from '@/components/ui/sidebar'
 import { NavGroup } from '@/components/layout/nav-group'
 import { NavUser } from '@/components/layout/nav-user'
-import { TeamSwitcher } from '@/components/layout/team-switcher'
+import { CompanyInformation } from './company-information'
+// import { TeamSwitcher } from '@/components/layout/team-switcher'
 import { getSidebarData } from './data/sidebar-data'
-import { useAuthStore } from '@/stores/authStore'
-import { decodeToken } from '@/lib/jwtUtils'
-import { useMemo } from 'react'
+import { useCompanyInfo } from './hooks/use-company-info'
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { accessToken } = useAuthStore((state) => state.auth)
 
-  const sidebarData = useMemo(() => {
+  const userInfo = useMemo(() => {
     if (accessToken) {
-      const userInfo = decodeToken(accessToken)
-      return getSidebarData(userInfo)
+      return decodeToken(accessToken)
     }
-    return getSidebarData()
+    return null
   }, [accessToken])
+
+  const companyInfo = useCompanyInfo(userInfo?.empresaId)
+
+  const sidebarData = useMemo(() => {
+    return getSidebarData(userInfo, companyInfo)
+  }, [userInfo, companyInfo])
+
   return (
     <Sidebar collapsible='icon' variant='floating' {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={sidebarData.teams} />
+        {/* <TeamSwitcher teams={sidebarData.teams} />
+         */}
+        <CompanyInformation
+          companyInformation={sidebarData.companyInformation}
+        />
       </SidebarHeader>
       <SidebarContent>
         {sidebarData.navGroups.map((props) => (

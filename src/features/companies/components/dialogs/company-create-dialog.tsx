@@ -26,8 +26,8 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { useCompanies } from '@/features/company/context/use-companies'
-import { NewCompany, newCompanySchema } from '@/features/company/data/schema'
+import { useCompanies } from '@/features/companies/context/use-companies'
+import { NewCompany, newCompanySchema } from '@/features/companies/data/schema'
 
 interface CompanyCreateDialogProps {
   open: boolean
@@ -182,9 +182,9 @@ export function CompanyCreateDialog({
                       </FormControl>
                       <SelectContent>
                         <SelectItem value='1'>1 - Producción</SelectItem>
-                        <SelectItem value='2'>2 - Pruebas</SelectItem>
-                        <SelectItem value='3'>3 - Desarrollo</SelectItem>
-                        <SelectItem value='4'>4 - Capacitación</SelectItem>
+                        <SelectItem value='2'>2 - Pruebas y Piloto</SelectItem>
+                        {/* <SelectItem value='3'>3 - Desarrollo</SelectItem>
+                        <SelectItem value='4'>4 - Capacitación</SelectItem> */}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -209,15 +209,13 @@ export function CompanyCreateDialog({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value='1'>
-                          1 - Computarizada en línea
-                        </SelectItem>
-                        <SelectItem value='2'>
+                        <SelectItem value='1'>1 - En línea</SelectItem>
+                        {/* <SelectItem value='2'>
                           2 - Computarizada en lote
-                        </SelectItem>
-                        <SelectItem value='3'>
+                        </SelectItem> */}
+                        {/* <SelectItem value='3'>
                           3 - Electrónica fuera de línea
-                        </SelectItem>
+                        </SelectItem> */}
                       </SelectContent>
                     </Select>
                     <FormMessage />

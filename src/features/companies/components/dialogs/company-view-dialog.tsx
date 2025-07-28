@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Company } from '@/features/company/data/schema'
+import { Company } from '@/features/companies/data/schema'
 
 interface CompanyViewDialogProps {
   open: boolean

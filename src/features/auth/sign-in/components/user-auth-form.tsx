@@ -6,6 +6,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { Link } from '@tanstack/react-router'
 import { useAuthStore } from '@/stores/authStore'
 import apiService from '@/lib/apiService'
+import { decodeToken } from '@/lib/jwtUtils'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -18,7 +19,6 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
-import { decodeToken } from '@/lib/jwtUtils'
 
 type UserAuthFormProps = HTMLAttributes<HTMLFormElement>
 
@@ -49,35 +49,36 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const navigate = useNavigate()
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-  setIsLoading(true)
-  try {
-    const result = await apiService.post<any>('/auth/signin/', data)
+    setIsLoading(true)
+    try {
+      const result = await apiService.post<any>('/auth/signin/', data)
 
-    if (result.ok && result.data && result.data.accessToken) {
-      const token = result.data.accessToken
-      const userData = decodeToken(token)
-      console.log(userData)
+      if (result.ok && result.data && result.data.accessToken) {
+        const token = result.data.accessToken
+        const userData = decodeToken(token)
 
-      if (!userData) {
-        alert('Token inválido o expirado')
-        return
+        // console.log('userData', userData)
+
+        if (!userData) {
+          alert('Token inválido o expirado')
+          return
+        }
+
+        // Guarda token y usuario
+        useAuthStore.getState().auth.setAccessToken(token)
+        useAuthStore.getState().auth.setUser(userData)
+        localStorage.setItem('authToken', token)
+
+        navigate({ to: '/' })
+      } else {
+        alert(result.message || 'Error de autenticación')
       }
-
-      // Guarda token y usuario
-      useAuthStore.getState().auth.setAccessToken(token)
-      useAuthStore.getState().auth.setUser(userData)
-      localStorage.setItem('authToken', token)
-
-      navigate({ to: '/' })
-    } else {
-      alert(result.message || 'Error de autenticación')
+    } catch (error: any) {
+      alert(error?.message || 'Error de autenticación')
+    } finally {
+      setIsLoading(false)
     }
-  } catch (error: any) {
-    alert(error?.message || 'Error de autenticación')
-  } finally {
-    setIsLoading(false)
   }
-}
 
   return (
     <Form {...form}>

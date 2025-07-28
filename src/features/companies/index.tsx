@@ -36,9 +36,9 @@ const filterToolbar = {
       title: 'Ambiente SIN',
       options: [
         { label: 'Producción', value: 1 },
-        { label: 'Pruebas', value: 2 },
-        { label: 'Desarrollo', value: 3 },
-        { label: 'Capacitación', value: 4 },
+        { label: 'Pruebas y Piloto', value: 2 },
+        // { label: 'Desarrollo', value: 3 },
+        // { label: 'Capacitación', value: 4 },
       ],
     },
   ],
@@ -46,6 +46,7 @@ const filterToolbar = {
 
 export default function Companies() {
   const { data, isLoading } = useCompanies()
+  console.log('Companies data:', data, 'Loading:', isLoading)
   const { setOpen } = useCompaniesUI()
   return (
     <>

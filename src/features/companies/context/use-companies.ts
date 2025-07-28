@@ -1,6 +1,6 @@
 // hooks/use-companies.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { NewCompany } from '@/features/company/data/schema'
+import { NewCompany } from '@/features/companies/data/schema'
 import { companiesApi } from '../lib/companies-service'
 
 export function useCompanies() {
@@ -13,8 +13,27 @@ export function useCompanies() {
     error,
   } = useQuery({
     queryKey: ['companies'],
-    queryFn: companiesApi.list,
+    queryFn: async () => {
+      console.log('useQuery: fetching companies...')
+      try {
+        const result = await companiesApi.list()
+        console.log('useQuery: companies result:', result)
+        return result
+      } catch (err) {
+        console.error('useQuery: error fetching companies:', err)
+        throw err
+      }
+    },
   })
+
+  console.log(
+    'useCompanies hook - data:',
+    data,
+    'isLoading:',
+    isLoading,
+    'error:',
+    error
+  )
 
   /* ---- create ---- */
   const createMutation = useMutation({
