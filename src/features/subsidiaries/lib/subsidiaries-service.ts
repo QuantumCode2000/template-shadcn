@@ -10,7 +10,7 @@ export const subsidiariesApi = {
   list: async () => {
     const res = await apiService.get<SubsidiariesResponse>('/sucursales')
     if (!res.ok) throw new Error(res.message)
-    return res.data.data.reverse()
+    return res.data
   },
 
   // Crear una nueva sucursal
