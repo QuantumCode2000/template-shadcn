@@ -20,11 +20,39 @@ import {
   IconUserOff,
   IconUsers,
   IconBuildingStore,
+  IconFileInvoice,
+  IconReceipt,
+  IconFileText,
+  IconRefresh,
+  IconX,
+  IconSearch,
+  IconCash,
+  IconShieldCheck,
+  IconCertificate,
+  IconReport,
+  IconChartBar,
+  IconDatabase,
+  IconTemplate,
+  IconPlugConnected,
+  IconBell,
+  IconActivity,
+  IconCloud,
+  IconCreditCard,
+  IconHeadset,
+  IconEye,
+  IconClipboardList,
+  IconCalendar,
+  IconFileCheck,
+  IconAlertTriangle,
 } from '@tabler/icons-react'
-import { AudioWaveform, Command, GalleryVerticalEnd } from 'lucide-react'
-import { ClerkLogo } from '@/assets/clerk-logo'
+import { Command } from 'lucide-react'
 import { type DecodedToken } from '@/lib/jwtUtils'
-import { type SidebarData, type CompanyInformation } from '../types'
+import { USER_ROLES, isSuperAdmin, isAdminOrSuperAdmin } from '@/lib/userRoles'
+import {
+  type SidebarData,
+  type CompanyInformation,
+  type NavGroup,
+} from '../types'
 
 export const getDefaultCompanyInfo = (): CompanyInformation => ({
   name: 'Codex - Facturación',
@@ -32,10 +60,357 @@ export const getDefaultCompanyInfo = (): CompanyInformation => ({
   plan: 'by Sinergya America S.R.L.',
 })
 
+// Función para obtener la navegación según el rol del usuario
+const getNavigationByRole = (userRole: number): NavGroup[] => {
+  // Super Admin (rolId: 1) - Vista global del SaaS
+  if (isSuperAdmin(userRole)) {
+    return [
+      {
+        title: 'Panel de Control',
+        items: [
+          {
+            title: 'Dashboard Global',
+            url: '/admin',
+            icon: IconLayoutDashboard,
+          },
+          {
+            title: 'Empresas',
+            url: '/companies',
+            icon: IconBuilding,
+          },
+          {
+            title: 'Usuarios',
+            url: '/users',
+            icon: IconUsers,
+          },
+          {
+            title: 'Subsidiarias',
+            url: '/subsidiaries',
+            icon: IconBuildingStore,
+          },
+          {
+            title: 'Impersonar',
+            url: '/admin/impersonate',
+            icon: IconEye,
+          },
+        ],
+      },
+      {
+        title: 'Monitoreo & Operación',
+        items: [
+          {
+            title: 'SIAT Monitor',
+            url: '/admin/siat/monitor',
+            icon: IconActivity,
+          },
+          {
+            title: 'Colas & Reintentos',
+            url: '/admin/queues',
+            icon: IconRefresh,
+          },
+          {
+            title: 'Logs & Auditoría',
+            url: '/admin/logs',
+            icon: IconFileText,
+          },
+          {
+            title: 'Salud de Servicios',
+            url: '/admin/health',
+            icon: IconShieldCheck,
+          },
+        ],
+      },
+      {
+        title: 'Catálogos & Config',
+        items: [
+          {
+            title: 'Catálogos Globales',
+            url: '/admin/catalogs',
+            icon: IconDatabase,
+          },
+          {
+            title: 'Ambientes SIAT',
+            url: '/admin/siat/env',
+            icon: IconCloud,
+          },
+          {
+            title: 'Certificados',
+            url: '/admin/certificates',
+            icon: IconCertificate,
+          },
+          {
+            title: 'Mantenimiento',
+            url: '/admin/maintenance',
+            icon: IconTool,
+          },
+        ],
+      },
+      {
+        title: 'Comercial',
+        items: [
+          {
+            title: 'Planes & Cobros',
+            url: '/admin/billing',
+            icon: IconCreditCard,
+          },
+          {
+            title: 'Soporte',
+            url: '/admin/support',
+            icon: IconHeadset,
+          },
+        ],
+      },
+    ]
+  }
+
+  // Admin de Empresa (rolId: 2) - Configuración SIAT y administración
+  if (isAdminOrSuperAdmin(userRole) && userRole === USER_ROLES.ADMIN) {
+    return [
+      {
+        title: 'Inicio',
+        items: [
+          {
+            title: 'Dashboard',
+            url: '/app',
+            icon: IconLayoutDashboard,
+          },
+        ],
+      },
+      {
+        title: 'Operación (Facturación)',
+        items: [
+          {
+            title: 'Emitir Factura',
+            url: '/app/facturar',
+            icon: IconFileInvoice,
+          },
+          {
+            title: 'Recepción por Paquete',
+            url: '/app/paquetes',
+            icon: IconPackages,
+          },
+          {
+            title: 'Borradores',
+            url: '/app/borradores',
+            icon: IconFileText,
+          },
+          {
+            title: 'Notas C/D',
+            url: '/app/notas',
+            icon: IconReceipt,
+          },
+          {
+            title: 'Anulaciones',
+            url: '/app/anulaciones',
+            icon: IconX,
+          },
+          {
+            title: 'Contingencia',
+            url: '/app/contingencia',
+            icon: IconAlertTriangle,
+          },
+          {
+            title: 'Seguimiento de Envíos',
+            url: '/app/envios',
+            icon: IconSearch,
+          },
+        ],
+      },
+      {
+        title: 'Maestros',
+        items: [
+          {
+            title: 'Clientes',
+            url: '/app/clientes',
+            icon: IconUsers,
+          },
+          {
+            title: 'Productos/Servicios',
+            url: '/app/items',
+            icon: IconClipboardList,
+          },
+          {
+            title: 'Sucursales & PDV',
+            url: '/app/sucursales',
+            icon: IconBuildingStore,
+          },
+        ],
+      },
+      {
+        title: 'SIAT (Admin)',
+        items: [
+          {
+            title: 'CUIS/CUFD',
+            url: '/app/siat/credenciales',
+            icon: IconShieldCheck,
+          },
+          {
+            title: 'Sincronizaciones',
+            url: '/app/siat/sync',
+            icon: IconRefresh,
+          },
+          {
+            title: 'Eventos Significativos',
+            url: '/app/siat/eventos',
+            icon: IconBell,
+          },
+          {
+            title: 'Certificados Digitales',
+            url: '/app/siat/certificados',
+            icon: IconCertificate,
+          },
+        ],
+      },
+      {
+        title: 'Reportes',
+        items: [
+          {
+            title: 'Libro de Ventas IVA',
+            url: '/app/reportes/libro-ventas',
+            icon: IconReport,
+          },
+          {
+            title: 'KPIs de Venta',
+            url: '/app/reportes/kpis',
+            icon: IconChartBar,
+          },
+          {
+            title: 'Estados de Envío',
+            url: '/app/reportes/envios',
+            icon: IconFileCheck,
+          },
+          {
+            title: 'Export Contable',
+            url: '/app/reportes/contabilidad',
+            icon: IconCalendar,
+          },
+        ],
+      },
+      {
+        title: 'Administración',
+        items: [
+          {
+            title: 'Usuarios & Roles',
+            url: '/app/usuarios',
+            icon: IconUserCog,
+          },
+          {
+            title: 'Plantillas PDF',
+            url: '/app/plantillas',
+            icon: IconTemplate,
+          },
+          {
+            title: 'Integraciones',
+            url: '/app/integraciones',
+            icon: IconPlugConnected,
+          },
+          {
+            title: 'Configuración Empresa',
+            url: '/app/config',
+            icon: IconSettings,
+          },
+        ],
+      },
+    ]
+  }
+
+  // Invoicer/Facturador (rolId: 3) - Solo emisión y gestión básica
+  if (userRole === USER_ROLES.INVOICER) {
+    return [
+      {
+        title: 'Trabajo Diario',
+        items: [
+          {
+            title: 'Inicio',
+            url: '/app',
+            icon: IconLayoutDashboard,
+          },
+          {
+            title: 'Emitir Factura',
+            url: '/app/facturar',
+            icon: IconFileInvoice,
+          },
+          {
+            title: 'Borradores',
+            url: '/app/borradores',
+            icon: IconFileText,
+          },
+          {
+            title: 'Notas C/D',
+            url: '/app/notas',
+            icon: IconReceipt,
+          },
+          {
+            title: 'Anulaciones',
+            url: '/app/anulaciones',
+            icon: IconX,
+          },
+          {
+            title: 'Seguimiento',
+            url: '/app/envios',
+            icon: IconSearch,
+          },
+        ],
+      },
+      {
+        title: 'Maestros (Limitado)',
+        items: [
+          {
+            title: 'Clientes',
+            url: '/app/clientes',
+            icon: IconUsers,
+          },
+          {
+            title: 'Productos/Servicios',
+            url: '/app/items',
+            icon: IconClipboardList,
+          },
+        ],
+      },
+      {
+        title: 'Caja (Opcional)',
+        items: [
+          {
+            title: 'Caja Diaria',
+            url: '/app/caja',
+            icon: IconCash,
+          },
+        ],
+      },
+      {
+        title: 'Mi Cuenta',
+        items: [
+          {
+            title: 'Mi Actividad',
+            url: '/app/mis-emisiones',
+            icon: IconActivity,
+          },
+        ],
+      },
+    ]
+  }
+
+  // Default/Fallback - navegación básica para roles no definidos
+  return [
+    {
+      title: 'General',
+      items: [
+        {
+          title: 'Dashboard',
+          url: '/app',
+          icon: IconLayoutDashboard,
+        },
+      ],
+    },
+  ]
+}
+
 export const getSidebarData = (
   userInfo?: DecodedToken | null,
   companyInfo?: CompanyInformation
 ): SidebarData => {
+  const userRole = userInfo?.rolId || USER_ROLES.INVOICER // Default a Invoicer si no hay rol
+
   return {
     user: {
       name: userInfo?.nombre || 'Usuario',
@@ -49,181 +424,8 @@ export const getSidebarData = (
         logo: Command,
         plan: 'by Sinergya America S.R.L.',
       },
-      // {
-      //   name: 'Acme Inc',
-      //   logo: GalleryVerticalEnd,
-      //   plan: 'Enterprise',
-      // },
-      // {
-      //   name: 'Acme Corp.',
-      //   logo: AudioWaveform,
-      //   plan: 'Startup',
-      // },
     ],
-    navGroups: [
-      {
-        title: 'General',
-        items: [
-          // {
-          //   title: 'Dashboard',
-          //   url: '/',
-          //   icon: IconLayoutDashboard,
-          // },
-          // {
-          //   title: 'Tasks',
-          //   url: '/tasks',
-          //   icon: IconChecklist,
-          // },
-          // {
-          //   title: 'Apps',
-          //   url: '/apps',
-          //   icon: IconPackages,
-          // },
-          // {
-          //   title: 'Chats',
-          //   url: '/chats',
-          //   badge: '3',
-          //   icon: IconMessages,
-          // },
-          {
-            title: 'Usuarios',
-            url: '/users',
-            icon: IconUsers,
-          },
-          {
-            title: 'Empresas',
-            url: '/companies',
-            icon: IconBuilding,
-          },
-          {
-            title: 'Sucursales',
-            url: '/subsidiaries',
-            icon: IconBuildingStore,
-          },
-          // {
-          //   title: 'Secured by Clerk',
-          //   icon: ClerkLogo,
-          //   items: [
-          //     {
-          //       title: 'Sign In',
-          //       url: '/clerk/sign-in',
-          //     },
-          //     {
-          //       title: 'Sign Up',
-          //       url: '/clerk/sign-up',
-          //     },
-          //     {
-          //       title: 'User Management',
-          //       url: '/clerk/user-management',
-          //     },
-          //   ],
-          // },
-        ],
-      },
-      // {
-      //   title: 'Pages',
-      //   items: [
-      //     {
-      //       title: 'Auth',
-      //       icon: IconLockAccess,
-      //       items: [
-      //         {
-      //           title: 'Sign In',
-      //           url: '/sign-in',
-      //         },
-      //         {
-      //           title: 'Sign In (2 Col)',
-      //           url: '/sign-in-2',
-      //         },
-      //         {
-      //           title: 'Sign Up',
-      //           url: '/sign-up',
-      //         },
-      //         {
-      //           title: 'Forgot Password',
-      //           url: '/forgot-password',
-      //         },
-      //         {
-      //           title: 'OTP',
-      //           url: '/otp',
-      //         },
-      //       ],
-      //     },
-      //     {
-      //       title: 'Errors',
-      //       icon: IconBug,
-      //       items: [
-      //         {
-      //           title: 'Unauthorized',
-      //           url: '/401',
-      //           icon: IconLock,
-      //         },
-      //         {
-      //           title: 'Forbidden',
-      //           url: '/403',
-      //           icon: IconUserOff,
-      //         },
-      //         {
-      //           title: 'Not Found',
-      //           url: '/404',
-      //           icon: IconError404,
-      //         },
-      //         {
-      //           title: 'Internal Server Error',
-      //           url: '/500',
-      //           icon: IconServerOff,
-      //         },
-      //         {
-      //           title: 'Maintenance Error',
-      //           url: '/503',
-      //           icon: IconBarrierBlock,
-      //         },
-      //       ],
-      //     },
-      //   ],
-      // },
-      // {
-      //   title: 'Other',
-      //   items: [
-      //     {
-      //       title: 'Settings',
-      //       icon: IconSettings,
-      //       items: [
-      //         {
-      //           title: 'Profile',
-      //           url: '/settings',
-      //           icon: IconUserCog,
-      //         },
-      //         {
-      //           title: 'Account',
-      //           url: '/settings/account',
-      //           icon: IconTool,
-      //         },
-      //         {
-      //           title: 'Appearance',
-      //           url: '/settings/appearance',
-      //           icon: IconPalette,
-      //         },
-      //         {
-      //           title: 'Notifications',
-      //           url: '/settings/notifications',
-      //           icon: IconNotification,
-      //         },
-      //         {
-      //           title: 'Display',
-      //           url: '/settings/display',
-      //           icon: IconBrowserCheck,
-      //         },
-      //       ],
-      //     },
-      //     {
-      //       title: 'Help Center',
-      //       url: '/help-center',
-      //       icon: IconHelp,
-      //     },
-      //   ],
-      // },
-    ],
+    navGroups: getNavigationByRole(userRole),
   }
 }
 

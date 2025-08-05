@@ -8,6 +8,7 @@ export interface DecodedToken {
   usuario: string
   email: string
   empresaId: number
+  rolId: number
   iat: number
   exp: number
 }
