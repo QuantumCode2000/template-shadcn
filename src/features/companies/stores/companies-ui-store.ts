@@ -1,6 +1,5 @@
-// stores/companies-ui-store.ts
 import { create } from 'zustand'
-import { Company } from '@/features/companies/data/schema'
+import { Company } from '../data/schema'
 
 export type CompaniesDialogType = 'add' | 'edit' | 'delete' | 'view'
 

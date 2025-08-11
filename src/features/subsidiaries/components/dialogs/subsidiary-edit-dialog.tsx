@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useSubsidiariesUI } from '@/stores/subsidiaries-ui-store'
 import apiService from '@/lib/apiService'
 import { Button } from '@/components/ui/button'
 import {
@@ -25,6 +24,7 @@ import { Input } from '@/components/ui/input'
 import { SelectDropdown } from '@/components/select-dropdown'
 import { useSubsidiaries } from '../../context/use-subsidiaries'
 import { type Subsidiary } from '../../data/schema'
+import { useSubsidiariesUI } from '../../stores/subsidiaries-ui-store'
 
 interface Company {
   id: number

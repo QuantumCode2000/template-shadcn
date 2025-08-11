@@ -1,5 +1,4 @@
 import { IconBuilding } from '@tabler/icons-react'
-import { useCompaniesUI } from '@/stores/companies-ui-store'
 import HeaderMain from '@/components/header-main'
 import { Main } from '@/components/layout/main'
 import { TableHeader } from '@/components/table/header/table-header'
@@ -7,6 +6,7 @@ import { TableData } from '@/components/table/table-data'
 import { columns } from './components/companies-columns'
 import { CompaniesDialogs } from './components/companies-dialogs'
 import { useCompanies } from './context/use-companies'
+import { useCompaniesUI } from './stores/companies-ui-store'
 
 const actions = [
   {

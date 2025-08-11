@@ -1,4 +1,4 @@
-import { useSubsidiariesUI } from '@/stores/subsidiaries-ui-store'
+import { useSubsidiariesUI } from '../stores/subsidiaries-ui-store'
 import { SubsidiaryCreateDialog } from './dialogs/subsidiary-create-dialog'
 import { SubsidiaryDeleteDialog } from './dialogs/subsidiary-delete-dialog'
 import { SubsidiaryEditDialog } from './dialogs/subsidiary-edit-dialog'

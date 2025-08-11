@@ -1,7 +1,6 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { Row } from '@tanstack/react-table'
 import { IconEdit, IconTrash, IconEye } from '@tabler/icons-react'
-import { useCompaniesUI } from '@/stores/companies-ui-store'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -12,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Company } from '../data/schema'
+import { useCompaniesUI } from '../stores/companies-ui-store'
 
 interface DataTableRowActionsProps {
   row: Row<Company>

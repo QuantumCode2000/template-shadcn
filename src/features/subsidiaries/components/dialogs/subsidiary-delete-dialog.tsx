@@ -1,4 +1,3 @@
-import { useSubsidiariesUI } from '@/stores/subsidiaries-ui-store'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,6 +10,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { useSubsidiaries } from '../../context/use-subsidiaries'
 import { type Subsidiary } from '../../data/schema'
+import { useSubsidiariesUI } from '../../stores/subsidiaries-ui-store'
 
 interface Props {
   open: boolean

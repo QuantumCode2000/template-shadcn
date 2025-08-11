@@ -1,6 +1,5 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { type Row } from '@tanstack/react-table'
-import { useSubsidiariesUI } from '@/stores/subsidiaries-ui-store'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -10,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { type Subsidiary } from '../data/schema'
+import { useSubsidiariesUI } from '../stores/subsidiaries-ui-store'
 
 interface DataTableRowActionsProps {
   row: Row<Subsidiary>

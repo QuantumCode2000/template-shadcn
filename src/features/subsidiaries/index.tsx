@@ -1,5 +1,4 @@
 import { IconPlus } from '@tabler/icons-react'
-import { useSubsidiariesUI } from '@/stores/subsidiaries-ui-store'
 import HeaderMain from '@/components/header-main'
 import { Main } from '@/components/layout/main'
 import { TableHeader } from '@/components/table/header/table-header'
@@ -7,6 +6,7 @@ import { TableData } from '@/components/table/table-data'
 import { columns } from './components/subsidiaries-columns'
 import { SubsidiariesDialogs } from './components/subsidiaries-dialogs'
 import { useSubsidiaries } from './context/use-subsidiaries'
+import { useSubsidiariesUI } from './stores/subsidiaries-ui-store'
 
 const actions = [
   {
