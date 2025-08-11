@@ -1,4 +1,3 @@
-// hooks/use-users.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { NewUser } from '@/features/users/data/schema'
 import { usersApi } from '../lib/users-service'

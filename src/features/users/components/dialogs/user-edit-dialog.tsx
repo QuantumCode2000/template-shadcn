@@ -26,9 +26,9 @@ import { Input } from '@/components/ui/input'
 import { MultiSelectDropdown } from '@/components/multi-select-dropdown'
 import { PasswordInput } from '@/components/password-input'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { useUsers } from '../../context/use-users'
 import { paises, expedidos } from '../../data/data'
 import { User } from '../../data/schema'
+import { useUsers } from '../../hooks/use-users'
 
 const formSchema = z
   .object({

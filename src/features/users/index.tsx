@@ -1,14 +1,14 @@
 import { IconUserPlus } from '@tabler/icons-react'
-import { useUsersUI } from '@/stores/users-ui-store'
 import HeaderMain from '@/components/header-main'
 import { Main } from '@/components/layout/main'
 import { TableHeader } from '@/components/table/header/table-header'
 import { TableData } from '@/components/table/table-data'
 import { columns, CompaniesProvider } from './components/users-columns'
 import { UsersDialogs } from './components/users-dialogs'
-import { useUsers } from './context/use-users'
 // import { UsersDialogType, useUsers } from './context/users-context'
 import { UsersProvider } from './context/users-context'
+import { useUsers } from './hooks/use-users'
+import { useUsersUI } from './stores/users-ui-store'
 
 const actions = [
   {

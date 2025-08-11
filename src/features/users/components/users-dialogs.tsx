@@ -1,4 +1,4 @@
-import { useUsersUI } from '@/stores/users-ui-store'
+import { useUsersUI } from '../stores/users-ui-store'
 import { UserCreateDialog } from './dialogs/user-create-dialog'
 import { UserEditDialog } from './dialogs/user-edit-dialog'
 

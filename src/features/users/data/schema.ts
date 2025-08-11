@@ -1,7 +1,5 @@
 import { z } from 'zod'
 
-const userSexSchema = z.union([z.literal('Masculino'), z.literal('Femenino')])
-
 export const userStatusSchema = z.union([
   z.literal('active'),
   z.literal('inactive'),
@@ -15,16 +13,16 @@ const userSchema = z.object({
   email: z.string().email().nullable(),
   activo: z.boolean().nullable(),
   empresaId: z.number().nullable(),
+  createdBy: z.string().nullable(),
+  updatedBy: z.string().nullable(),
 })
-
-// --- El resto de tus esquemas derivados ya no necesitan cambios ---
 
 const newUserSchema = userSchema.omit({
   id: true,
   activo: true,
 })
 
-const updateUserSchema = newUserSchema.partial() // .partial() ya es suficiente
+const updateUserSchema = newUserSchema.partial()
 
 export type User = z.infer<typeof userSchema>
 export type NewUser = z.infer<typeof newUserSchema>
