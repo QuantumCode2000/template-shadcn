@@ -4,7 +4,10 @@ import { User, NewUser } from '@/features/users/data/schema'
 
 export const usersApi = {
   list: async () => {
-    const res = await apiService.get<User[]>('/usuarios')
+    ///usuarios?include=rol&include=empresa
+    const res = await apiService.get<User[]>(
+      '/usuarios?include=rol&include=empresa'
+    )
     if (!res.ok) throw new Error(res.message)
     return res.data.reverse()
   },
