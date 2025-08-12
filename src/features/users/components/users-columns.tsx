@@ -30,31 +30,7 @@ export const CompaniesProvider = ({ children }: { children: ReactNode }) => {
   const [companies, setCompanies] = useState<Record<number, string>>({})
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchCompanies = async () => {
-      try {
-        const response = await apiService.get('/empresas')
-        if (response.ok) {
-          const companiesData =
-            (response.data as any)?.data || response.data || []
-          const companiesMap = companiesData.reduce(
-            (acc: Record<number, string>, company: any) => {
-              acc[company.id] = company.nombre
-              return acc
-            },
-            {}
-          )
-          setCompanies(companiesMap)
-        }
-      } catch (error) {
-        console.error('Error fetching companies:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchCompanies()
-  }, [])
+  useEffect(() => {}, [])
 
   return (
     <CompaniesContext.Provider value={{ companies, loading }}>
@@ -66,26 +42,6 @@ export const CompaniesProvider = ({ children }: { children: ReactNode }) => {
 // Hook para usar las empresas
 const useCompanies = () => {
   return useContext(CompaniesContext)
-}
-
-// Componente para mostrar la empresa
-const CompanyCell = ({ empresaId }: { empresaId: number | null }) => {
-  const { companies, loading } = useCompanies()
-
-  if (loading) {
-    return <div className='text-muted-foreground text-sm'>...</div>
-  }
-
-  if (!empresaId) {
-    return <div className='text-muted-foreground text-sm'>Sin empresa</div>
-  }
-
-  const companyName = companies[empresaId]
-  return (
-    <div className='max-w-[150px] truncate text-sm'>
-      {companyName || `ID: ${empresaId}`}
-    </div>
-  )
 }
 
 export const columns: ColumnDef<User>[] = [
@@ -140,14 +96,19 @@ export const columns: ColumnDef<User>[] = [
   },
 
   {
-    accessorKey: 'empresaId',
+    accessorKey: 'empresa',
     header: ({ column }) => (
       <TableColumnHeader column={column} title='Empresa' />
     ),
-    cell: ({ row }) => {
-      const empresaId = row.getValue('empresaId') as number | null
-      return <CompanyCell empresaId={empresaId} />
-    },
+    cell: ({ row }) => (
+      <div>{row.original.empresa?.nombre ?? 'Sin empresa'}</div>
+    ),
+  },
+
+  {
+    accessorKey: 'rol',
+    header: ({ column }) => <TableColumnHeader column={column} title='Rol' />,
+    cell: ({ row }) => <div>{row.original.rol?.codigo ?? 'Sin rol'}</div>,
   },
 
   {
