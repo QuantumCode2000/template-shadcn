@@ -18,7 +18,6 @@ import {
 export function ProfileDropdown() {
   const [userInfo, setUserInfo] = useState<DecodedToken | null>(null)
   const { user, accessToken, reset } = useAuthStore((state) => state.auth)
-  console.log('currrentUser', user)
   const router = useRouter()
 
   useEffect(() => {
