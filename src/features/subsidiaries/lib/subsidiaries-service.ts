@@ -1,14 +1,33 @@
+import Cookies from 'js-cookie'
 import apiService from '@/lib/apiService'
+import { decodeToken } from '@/lib/jwtUtils'
 import {
   Subsidiary,
   NewSubsidiary,
   SubsidiariesResponse,
 } from '@/features/subsidiaries/data/schema'
 
+function getEmpresaIdFromToken(): number | null {
+  try {
+    const cookieToken = Cookies.get('thisisjustarandomstring')
+    if (!cookieToken) return null
+    const token = JSON.parse(cookieToken)
+    const decoded = decodeToken(token)
+    return decoded?.empresaId ?? null
+  } catch {
+    return null
+  }
+}
+
 export const subsidiariesApi = {
   // Obtener todas las sucursales
   list: async () => {
-    const res = await apiService.get<SubsidiariesResponse>('/sucursales')
+    const empresaId = getEmpresaIdFromToken()
+    const base = '/sucursales'
+    const url = empresaId
+      ? `${base}?empresa_id[eq]=${encodeURIComponent(String(empresaId))}`
+      : base
+    const res = await apiService.get<SubsidiariesResponse>(url)
     if (!res.ok) throw new Error(res.message)
     return res.data
   },
@@ -29,7 +48,6 @@ export const subsidiariesApi = {
 
   // Actualizar una sucursal
   update: async (id: string | number, body: Partial<NewSubsidiary>) => {
-    console.log('Updating subsidiary with ID:', id)
     const res = await apiService.put<Subsidiary>(`/sucursales/${id}`, body)
     if (!res.ok) throw new Error(res.message)
     return res.data

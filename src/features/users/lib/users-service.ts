@@ -1,5 +1,7 @@
 // lib/users-service.ts
+import Cookies from 'js-cookie'
 import apiService from '@/lib/apiService'
+import { decodeToken } from '@/lib/jwtUtils'
 import { User, NewUser, UpdateUser } from '@/features/users/data/schema'
 
 // Helper para extraer data cuando la API envía { data: {...}, status: 'success' }
@@ -15,11 +17,26 @@ function unwrap<T>(res: any): T {
   return res as T
 }
 
+function getEmpresaIdFromCookie(): number | null {
+  try {
+    const cookieToken = Cookies.get('thisisjustarandomstring')
+    if (!cookieToken) return null
+    const token = JSON.parse(cookieToken)
+    const decoded = decodeToken(token)
+    return decoded?.empresaId ?? null
+  } catch {
+    return null
+  }
+}
+
 export const usersApi = {
   list: async () => {
-    const res = await apiService.get<any>(
-      '/usuarios?include=rol&include=empresa'
-    )
+    const empresaId = getEmpresaIdFromCookie()
+    const base = '/usuarios?include=rol&include=empresa'
+    const url = empresaId
+      ? `${base}&empresa_id[eq]=${encodeURIComponent(String(empresaId))}`
+      : base
+    const res = await apiService.get<any>(url)
     if (!res.ok) throw new Error(res.message)
     // La API puede devolver { data: [...], status } ó directamente [...]
     const payload = res.data

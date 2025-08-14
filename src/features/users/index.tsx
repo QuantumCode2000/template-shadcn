@@ -1,26 +1,27 @@
+import Cookies from 'js-cookie'
 import { IconUserPlus } from '@tabler/icons-react'
+import { decodeToken } from '@/lib/jwtUtils'
 import HeaderMain from '@/components/header-main'
 import { Main } from '@/components/layout/main'
 import { TableHeader } from '@/components/table/header/table-header'
 import { TableData } from '@/components/table/table-data'
 import { columns } from './components/users-columns'
 import { UsersDialogs } from './components/users-dialogs'
-// import { UsersDialogType, useUsers } from './context/users-context'
-import { UsersProvider } from './context/users-context'
 import { useUsers } from './hooks/use-users'
 import { useUsersUI } from './stores/users-ui-store'
 
-const actions = [
-  {
-    label: 'Agregar Usuario',
-    icon: IconUserPlus,
-    action: 'add',
-    onClick: () => {
-      const { setOpen } = useUsersUI()
-      setOpen('add')
-    },
-  },
-]
+// Función para obtener si es admin desde cookie
+function getIsAdminFromCookie(): boolean {
+  try {
+    const cookieToken = Cookies.get('thisisjustarandomstring')
+    if (!cookieToken) return false
+    const token = JSON.parse(cookieToken)
+    const decoded = decodeToken(token)
+    return decoded?.rolId === 2
+  } catch {
+    return false
+  }
+}
 
 const filterToolbar = {
   search: { columnId: 'usuario', placeholder: 'Filtrar usuarios…' },
@@ -48,8 +49,28 @@ const filterToolbar = {
 }
 
 export default function Users() {
-  const { data, isLoading } = useUsers()
-  const { setOpen } = useUsersUI()
+  const { data } = useUsers()
+  const ui = useUsersUI()
+  const isAdmin = getIsAdminFromCookie()
+
+  const actions = isAdmin
+    ? [
+        {
+          label: 'Agregar Usuario',
+          icon: IconUserPlus,
+          action: 'add-admin',
+          onClick: () => ui.setOpen('add-admin'),
+        },
+      ]
+    : [
+        {
+          label: 'Agregar Usuario',
+          icon: IconUserPlus,
+          action: 'add',
+          onClick: () => ui.setOpen('add'),
+        },
+      ]
+
   return (
     <>
       <HeaderMain />
@@ -57,21 +78,13 @@ export default function Users() {
         <TableHeader
           title='Lista de Usuarios'
           subtitle='Maneja tus usuarios y sus roles aquí.'
-          // useData={() => {
-          //   const { setOpen } = useUsers()
-          //   return (action: string) => setOpen(action as UsersDialogType)
-          // }}
-          useData={() => {
-            const { setOpen } = useUsersUI()
-            return (action: string) =>
-              setOpen(action as 'add' | 'edit' | 'delete' | 'invite')
-          }}
+          useData={() => (action: string) => ui.setOpen(action as any)}
           actions={actions}
         />
         <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
           <TableData
             columns={columns}
-            useData={() => data}
+            data={Array.isArray(data) ? data : []}
             toolbar={filterToolbar}
           />
         </div>

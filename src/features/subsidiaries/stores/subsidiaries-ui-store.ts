@@ -1,6 +1,11 @@
 import { create } from 'zustand'
 
-type SubsidiariesDialogType = 'add' | 'edit' | 'delete'
+type SubsidiariesDialogType =
+  | 'add'
+  | 'add-admin'
+  | 'edit'
+  | 'edit-admin'
+  | 'delete'
 
 interface SubsidiariesUIState {
   selectedSubsidiary: any | null

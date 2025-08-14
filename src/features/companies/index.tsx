@@ -46,7 +46,6 @@ const filterToolbar = {
 
 export default function Companies() {
   const { data, isLoading } = useCompanies()
-  console.log('Companies data:', data, 'Loading:', isLoading)
   const { setOpen } = useCompaniesUI()
   return (
     <>

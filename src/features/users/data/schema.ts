@@ -52,9 +52,10 @@ export const newUserSchema = z.object({
   rolId: z.number(),
 })
 
-export const updateUserSchema = newUserSchema
-  .partial()
-  .extend({ id: z.number() })
+export const updateUserSchema = newUserSchema.partial().extend({
+  id: z.number(),
+  activo: z.boolean().optional(),
+})
 
 export type User = z.infer<typeof userSchema>
 export type UsersList = z.infer<typeof usersListSchema>

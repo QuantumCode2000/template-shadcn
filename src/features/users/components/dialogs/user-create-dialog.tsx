@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
 import apiService from '@/lib/apiService'
 import { Button } from '@/components/ui/button'
 import {
@@ -119,11 +120,12 @@ export function UserCreateDialog({ open, onOpenChange }: Props) {
       setSubmitting(true)
       const { password_confirmation, ...submitData } = values
       await createUser(submitData as any)
+      toast.success('Usuario creado exitosamente')
       form.reset()
       onOpenChange(false)
     } catch (error) {
       console.error('Error creating user:', error)
-      alert('Error al crear el usuario')
+      toast.error('Error al crear el usuario')
     } finally {
       setSubmitting(false)
     }

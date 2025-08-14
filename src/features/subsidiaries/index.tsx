@@ -1,4 +1,6 @@
+import Cookies from 'js-cookie'
 import { IconPlus } from '@tabler/icons-react'
+import { decodeToken } from '@/lib/jwtUtils'
 import HeaderMain from '@/components/header-main'
 import { Main } from '@/components/layout/main'
 import { TableHeader } from '@/components/table/header/table-header'
@@ -8,17 +10,18 @@ import { SubsidiariesDialogs } from './components/subsidiaries-dialogs'
 import { useSubsidiaries } from './context/use-subsidiaries'
 import { useSubsidiariesUI } from './stores/subsidiaries-ui-store'
 
-const actions = [
-  {
-    label: 'Agregar Sucursal',
-    icon: IconPlus,
-    action: 'add',
-    onClick: () => {
-      const { setOpen } = useSubsidiariesUI()
-      setOpen('add')
-    },
-  },
-]
+// Función para obtener si es admin desde cookie
+function getIsAdminFromCookie(): boolean {
+  try {
+    const cookieToken = Cookies.get('thisisjustarandomstring')
+    if (!cookieToken) return false
+    const token = JSON.parse(cookieToken)
+    const decoded = decodeToken(token)
+    return decoded?.rolId === 2
+  } catch {
+    return false
+  }
+}
 
 const filterToolbar = {
   search: { columnId: 'nombre', placeholder: 'Filtrar sucursales…' },
@@ -45,8 +48,32 @@ const filterToolbar = {
 }
 
 export default function Subsidiaries() {
-  const { data, isLoading } = useSubsidiaries()
-  const { setOpen } = useSubsidiariesUI()
+  const { data } = useSubsidiaries()
+  const isAdmin = getIsAdminFromCookie()
+
+  const actions = isAdmin
+    ? [
+        {
+          label: 'Agregar Sucursal',
+          icon: IconPlus,
+          action: 'add-admin',
+          onClick: () => {
+            const { setOpen } = useSubsidiariesUI()
+            setOpen('add-admin')
+          },
+        },
+      ]
+    : [
+        {
+          label: 'Agregar Sucursal',
+          icon: IconPlus,
+          action: 'add',
+          onClick: () => {
+            const { setOpen } = useSubsidiariesUI()
+            setOpen('add')
+          },
+        },
+      ]
 
   return (
     <>
@@ -57,15 +84,14 @@ export default function Subsidiaries() {
           subtitle='Maneja las sucursales de tu empresa aquí.'
           useData={() => {
             const { setOpen } = useSubsidiariesUI()
-            return (action: string) =>
-              setOpen(action as 'add' | 'edit' | 'delete')
+            return (action: string) => setOpen(action as any)
           }}
           actions={actions}
         />
         <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
           <TableData
             columns={columns}
-            useData={() => data}
+            data={Array.isArray(data) ? data : []}
             toolbar={filterToolbar}
           />
         </div>

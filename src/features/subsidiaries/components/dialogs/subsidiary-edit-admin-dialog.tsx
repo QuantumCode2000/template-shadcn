@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { z } from 'zod'
+import Cookies from 'js-cookie'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
-import apiService from '@/lib/apiService'
+import { decodeToken } from '@/lib/jwtUtils'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -22,18 +23,10 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { SelectDropdown } from '@/components/select-dropdown'
 import { useSubsidiaries } from '../../context/use-subsidiaries'
-import { type Subsidiary } from '../../data/schema'
 import { useSubsidiariesUI } from '../../stores/subsidiaries-ui-store'
 
-interface Company {
-  id: number
-  nombre: string
-}
-
 const formSchema = z.object({
-  empresaId: z.number().min(1, 'La empresa es obligatoria'),
   codigo: z.number().min(1, 'El código es obligatorio'),
   nombre: z.string().min(1, 'El nombre es obligatorio'),
   municipio: z.string().min(1, 'El municipio es obligatorio'),
@@ -49,18 +42,28 @@ interface Props {
   onOpenChange: (open: boolean) => void
 }
 
-export function SubsidiaryEditDialog({ open, onOpenChange }: Props) {
-  const { updateSubsidiary } = useSubsidiaries()
+export function SubsidiaryEditAdminDialog({ open, onOpenChange }: Props) {
+  const { updateSubsidiary, isUpdating } = useSubsidiaries()
   const { subsidiaries } = useSubsidiariesUI()
-  const [empresas, setEmpresas] = useState<Company[]>([])
-  const [loading, setLoading] = useState(true)
+  const subsidiary = subsidiaries.selectedSubsidiary
 
-  const selectedSubsidiary = subsidiaries.selectedSubsidiary as Subsidiary
+  const rawToken = (() => {
+    try {
+      const cookieToken = Cookies.get('thisisjustarandomstring')
+      if (!cookieToken) return null
+      return JSON.parse(cookieToken)
+    } catch {
+      return null
+    }
+  })()
+  const decoded = rawToken ? decodeToken(rawToken) : null
+  const empresaId = decoded?.empresaId
+  const isAdmin = decoded?.rolId === 2
+  const canUse = isAdmin && empresaId
 
   const form = useForm<SubsidiaryForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      empresaId: 0,
       codigo: 0,
       nombre: '',
       municipio: '',
@@ -71,101 +74,62 @@ export function SubsidiaryEditDialog({ open, onOpenChange }: Props) {
   })
 
   useEffect(() => {
-    if (!open) return
-    const fetchEmpresas = async () => {
-      setLoading(true)
-      try {
-        const response = await apiService.get('/empresas')
-        if (!response.ok) throw new Error(response.message)
-        const empresasData = (response.data as any)?.data || response.data || []
-        setEmpresas(empresasData)
-        setLoading(false)
-      } catch (error) {
-        console.error('Error fetching companies:', error)
-        setEmpresas([])
-        setLoading(false)
-      }
-    }
-    fetchEmpresas()
-  }, [open])
-
-  useEffect(() => {
-    if (selectedSubsidiary && open) {
+    if (open && subsidiary) {
       form.reset({
-        empresaId: selectedSubsidiary.empresaId,
-        codigo: selectedSubsidiary.codigo,
-        nombre: selectedSubsidiary.nombre,
-        municipio: selectedSubsidiary.municipio,
-        direccion: selectedSubsidiary.direccion,
-        telefono: selectedSubsidiary.telefono,
-        codigoSin: selectedSubsidiary.codigoSin,
+        codigo: subsidiary.codigo || 0,
+        nombre: subsidiary.nombre || '',
+        municipio: subsidiary.municipio || '',
+        direccion: subsidiary.direccion || '',
+        telefono: subsidiary.telefono || 0,
+        codigoSin: subsidiary.codigoSin || 0,
       })
     }
-  }, [selectedSubsidiary, form, open])
+    if (!open) form.reset()
+  }, [open, subsidiary])
 
   const onSubmit = async (values: SubsidiaryForm) => {
-    if (!selectedSubsidiary) return
+    if (!subsidiary?.id || !empresaId) return
+
+    // Verify the subsidiary belongs to the same company as the admin
+    if (subsidiary.empresaId !== empresaId) {
+      toast.error('No puedes editar sucursales de otra empresa')
+      return
+    }
 
     try {
-      // @ts-ignore - Temporal mientras se actualiza el schema
-      await updateSubsidiary({ id: selectedSubsidiary.id, data: values as any })
+      // @ts-ignore schema pending update to include empresaId
+      await updateSubsidiary({
+        id: subsidiary.id,
+        data: { ...values, empresaId: Number(empresaId) },
+      })
       toast.success('Sucursal actualizada exitosamente')
       form.reset()
       onOpenChange(false)
-    } catch (error) {
-      console.error('Error updating subsidiary:', error)
-      toast.error('Error al actualizar la sucursal')
+    } catch (e) {
+      console.error('Error editing subsidiary (admin)', e)
+      toast.error('Error al editar la sucursal')
     }
   }
 
-  if (!selectedSubsidiary) return null
+  if (!canUse) return null
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='sm:max-w-2xl'>
         <DialogHeader className='text-left'>
-          <DialogTitle>Editar Sucursal</DialogTitle>
+          <DialogTitle>Editar Sucursal (Admin)</DialogTitle>
           <DialogDescription>
-            Modifica los datos de la sucursal
+            La sucursal permanecerá asociada a tu empresa.
           </DialogDescription>
         </DialogHeader>
-
         <div className='-mr-4 h-[28rem] w-full overflow-y-auto py-1 pr-4'>
           <Form {...form}>
             <form
-              id='subsidiary-edit-form'
+              id='subsidiary-admin-edit-form'
               onSubmit={form.handleSubmit(onSubmit)}
               className='space-y-4'
             >
               <div className='grid grid-cols-2 gap-4'>
-                {/* Empresa */}
-                <FormField
-                  control={form.control}
-                  name='empresaId'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Empresa</FormLabel>
-                      <FormControl>
-                        <SelectDropdown
-                          onValueChange={(value) =>
-                            field.onChange(Number(value))
-                          }
-                          defaultValue={field.value?.toString()}
-                          placeholder='Selecciona una empresa'
-                          isPending={loading}
-                          items={empresas.map((empresa) => ({
-                            label: empresa.nombre,
-                            value: empresa.id.toString(),
-                          }))}
-                          isControlled={true}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {/* Código */}
                 <FormField
                   control={form.control}
                   name='codigo'
@@ -186,10 +150,6 @@ export function SubsidiaryEditDialog({ open, onOpenChange }: Props) {
                     </FormItem>
                   )}
                 />
-              </div>
-
-              <div className='grid grid-cols-2 gap-4'>
-                {/* Nombre */}
                 <FormField
                   control={form.control}
                   name='nombre'
@@ -203,8 +163,8 @@ export function SubsidiaryEditDialog({ open, onOpenChange }: Props) {
                     </FormItem>
                   )}
                 />
-
-                {/* Municipio */}
+              </div>
+              <div className='grid grid-cols-2 gap-4'>
                 <FormField
                   control={form.control}
                   name='municipio'
@@ -218,25 +178,21 @@ export function SubsidiaryEditDialog({ open, onOpenChange }: Props) {
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name='direccion'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Dirección</FormLabel>
+                      <FormControl>
+                        <Input placeholder='Av. Principal #123' {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
-
-              {/* Dirección */}
-              <FormField
-                control={form.control}
-                name='direccion'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Dirección</FormLabel>
-                    <FormControl>
-                      <Input placeholder='Av. Principal #123' {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <div className='grid grid-cols-2 gap-4'>
-                {/* Teléfono */}
                 <FormField
                   control={form.control}
                   name='telefono'
@@ -257,8 +213,6 @@ export function SubsidiaryEditDialog({ open, onOpenChange }: Props) {
                     </FormItem>
                   )}
                 />
-
-                {/* Código SIN */}
                 <FormField
                   control={form.control}
                   name='codigoSin'
@@ -283,10 +237,13 @@ export function SubsidiaryEditDialog({ open, onOpenChange }: Props) {
             </form>
           </Form>
         </div>
-
         <DialogFooter>
-          <Button type='submit' form='subsidiary-edit-form'>
-            Actualizar Sucursal
+          <Button
+            type='submit'
+            form='subsidiary-admin-edit-form'
+            disabled={isUpdating}
+          >
+            {isUpdating ? 'Guardando…' : 'Guardar Cambios'}
           </Button>
         </DialogFooter>
       </DialogContent>

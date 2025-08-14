@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
 import apiService from '@/lib/apiService'
 import { Button } from '@/components/ui/button'
 import {
@@ -87,11 +88,12 @@ export function SubsidiaryCreateDialog({ open, onOpenChange }: Props) {
     try {
       // @ts-ignore - Temporal mientras se actualiza el schema
       await createSubsidiary(values as any)
+      toast.success('Sucursal creada exitosamente')
       form.reset()
       onOpenChange(false)
     } catch (error) {
       console.error('Error creating subsidiary:', error)
-      alert('Error al crear la sucursal')
+      toast.error('Error al crear la sucursal')
     }
   }
 

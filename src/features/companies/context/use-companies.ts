@@ -14,26 +14,14 @@ export function useCompanies() {
   } = useQuery({
     queryKey: ['companies'],
     queryFn: async () => {
-      console.log('useQuery: fetching companies...')
       try {
         const result = await companiesApi.list()
-        console.log('useQuery: companies result:', result)
         return result
       } catch (err) {
-        console.error('useQuery: error fetching companies:', err)
         throw err
       }
     },
   })
-
-  console.log(
-    'useCompanies hook - data:',
-    data,
-    'isLoading:',
-    isLoading,
-    'error:',
-    error
-  )
 
   /* ---- create ---- */
   const createMutation = useMutation({

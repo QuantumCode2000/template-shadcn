@@ -29,7 +29,6 @@ export const companiesApi = {
 
   // Actualizar una empresa
   update: async (id: string | number, body: Partial<NewCompany>) => {
-    console.log('Updating company with ID:', id)
     const res = await apiService.put<Company>(`/empresas/${id}`, body)
     if (!res.ok) throw new Error(res.message)
     return res.data

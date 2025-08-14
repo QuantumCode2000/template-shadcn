@@ -1,6 +1,13 @@
+import Cookies from 'js-cookie'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { Row } from '@tanstack/react-table'
-import { IconEdit, IconTrash } from '@tabler/icons-react'
+import {
+  IconEdit,
+  IconTrash,
+  IconUserCheck,
+  IconUserX,
+} from '@tabler/icons-react'
+import { decodeToken } from '@/lib/jwtUtils'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -20,6 +27,26 @@ interface DataTableRowActionsProps {
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const { setOpen, setCurrentRow } = useUsersUI()
+  const user = row.original
+
+  // Verificar si es admin para usar diálogos admin
+  const isAdmin = (() => {
+    try {
+      const cookieToken = Cookies.get('thisisjustarandomstring')
+      if (!cookieToken) return false
+      const token = JSON.parse(cookieToken)
+      const decoded = decodeToken(token)
+      return decoded?.rolId === 2
+    } catch {
+      return false
+    }
+  })()
+
+  const handleToggleStatus = () => {
+    setCurrentRow(user)
+    setOpen('toggle-status')
+  }
+
   return (
     <>
       <DropdownMenu modal={false}>
@@ -36,12 +63,22 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           <DropdownMenuItem
             onClick={() => {
               setCurrentRow(row.original)
-              setOpen('edit')
+              setOpen(isAdmin ? 'edit-admin' : 'edit')
             }}
           >
             Editar
             <DropdownMenuShortcut>
               <IconEdit size={16} />
+            </DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleToggleStatus}>
+            {user.activo ? 'Inhabilitar' : 'Habilitar'} Usuario
+            <DropdownMenuShortcut>
+              {user.activo ? (
+                <IconUserX size={16} />
+              ) : (
+                <IconUserCheck size={16} />
+              )}
             </DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuSeparator />

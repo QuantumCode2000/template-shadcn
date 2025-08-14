@@ -1,5 +1,7 @@
+import Cookies from 'js-cookie'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { type Row } from '@tanstack/react-table'
+import { decodeToken } from '@/lib/jwtUtils'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -20,7 +22,14 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
 
   const handleEdit = () => {
     setSelectedSubsidiary(row.original)
-    setOpen('edit')
+
+    // Check if user is admin from JWT
+    const token = Cookies.get('thisisjustarandomstring')
+    const cookieToken = token ? JSON.parse(token) : null
+    const decodedToken = cookieToken ? decodeToken(cookieToken) : null
+    const isAdmin = decodedToken?.rolId === 2
+
+    setOpen(isAdmin ? 'edit-admin' : 'edit')
   }
 
   const handleDelete = () => {

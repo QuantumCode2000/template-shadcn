@@ -57,8 +57,6 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         const token = result.data.accessToken
         const userData = decodeToken(token)
 
-        // console.log('userData', userData)
-
         if (!userData) {
           alert('Token inválido o expirado')
           return

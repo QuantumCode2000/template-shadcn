@@ -1,3 +1,4 @@
+import { toast } from 'sonner'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,10 +29,11 @@ export function SubsidiaryDeleteDialog({ open, onOpenChange }: Props) {
 
     try {
       await deleteSubsidiary(selectedSubsidiary.id)
+      toast.success('Sucursal eliminada exitosamente')
       onOpenChange(false)
     } catch (error) {
       console.error('Error deleting subsidiary:', error)
-      alert('Error al eliminar la sucursal')
+      toast.error('Error al eliminar la sucursal')
     }
   }
 

@@ -1,7 +1,14 @@
 import { create } from 'zustand'
 import { User } from '../data/schema'
 
-export type UsersDialogType = 'add' | 'edit' | 'delete' | 'invite'
+export type UsersDialogType =
+  | 'add'
+  | 'add-admin'
+  | 'edit'
+  | 'edit-admin'
+  | 'delete'
+  | 'invite'
+  | 'toggle-status'
 
 interface UsersUIState {
   open: UsersDialogType | null

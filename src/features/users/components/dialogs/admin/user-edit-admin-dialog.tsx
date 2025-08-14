@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { z } from 'zod'
+import Cookies from 'js-cookie'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import apiService from '@/lib/apiService'
+import { decodeToken } from '@/lib/jwtUtils'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -22,10 +24,9 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { AsyncSelectDropdown } from '@/components/async-select-dropdown'
 import { PasswordInput } from '@/components/password-input'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { useUsers } from '../../hooks/use-users'
+import { useUsers } from '../../../hooks/use-users'
 
 const formSchema = z
   .object({
@@ -33,7 +34,6 @@ const formSchema = z
     apellido: z.string().min(1, 'El apellido es obligatorio'),
     usuario: z.string().min(1, 'El usuario es obligatorio'),
     email: z.string().email('Correo electrónico inválido'),
-    empresaId: z.number().nullable().optional(),
     rolId: z.number().nullable().optional(),
     password: z.string().optional(),
     password_confirmation: z.string().optional(),
@@ -65,13 +65,10 @@ const formSchema = z
   })
 
 type UserForm = z.infer<typeof formSchema>
+
 interface Role {
   id: number
   codigo: string
-}
-interface Company {
-  id: number
-  nombre: string
 }
 
 interface Props {
@@ -80,12 +77,39 @@ interface Props {
   userId?: number | string
 }
 
-export function UserEditDialog({ open, onOpenChange, userId }: Props) {
+export function UserEditAdminDialog({ open, onOpenChange, userId }: Props) {
   const { getUser, updateUser } = useUsers()
   const [roles, setRoles] = useState<Role[]>([])
-  const [companies, setCompanies] = useState<Company[]>([])
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
+
+  // Verificar permisos de admin
+  function getEmpresaIdFromCookie(): number | null {
+    try {
+      const cookieToken = Cookies.get('thisisjustarandomstring')
+      if (!cookieToken) return null
+      const token = JSON.parse(cookieToken)
+      const decoded = decodeToken(token)
+      return decoded?.empresaId ?? null
+    } catch {
+      return null
+    }
+  }
+
+  const isAdmin = (() => {
+    try {
+      const cookieToken = Cookies.get('thisisjustarandomstring')
+      if (!cookieToken) return false
+      const token = JSON.parse(cookieToken)
+      const decoded = decodeToken(token)
+      return decoded?.rolId === 2
+    } catch {
+      return false
+    }
+  })()
+
+  const empresaId = getEmpresaIdFromCookie()
+  const canUse = isAdmin && empresaId
 
   const form = useForm<UserForm>({
     resolver: zodResolver(formSchema),
@@ -94,7 +118,6 @@ export function UserEditDialog({ open, onOpenChange, userId }: Props) {
       apellido: '',
       usuario: '',
       email: '',
-      empresaId: null,
       rolId: null,
       password: '',
       password_confirmation: '',
@@ -102,29 +125,23 @@ export function UserEditDialog({ open, onOpenChange, userId }: Props) {
   })
 
   useEffect(() => {
-    if (!open || !userId) return
+    if (!open || !userId || !canUse) return
 
     const fetchData = async () => {
       setLoading(true)
       try {
-        const [rolesRes, companiesRes, user] = await Promise.all([
+        const [rolesRes, user] = await Promise.all([
           apiService.get<any>('/roles'),
-          apiService.get<any>('/empresas'),
           getUser(userId),
         ])
         if (rolesRes.ok)
           setRoles((rolesRes.data?.data || rolesRes.data) as Role[])
-        if (companiesRes.ok)
-          setCompanies(
-            (companiesRes.data?.data || companiesRes.data) as Company[]
-          )
 
         form.reset({
           nombre: user.nombre,
           apellido: user.apellido,
           usuario: user.usuario,
           email: user.email,
-          empresaId: user.empresa?.id || user.empresaId || null,
           rolId: user.rol?.id || null,
           password: '',
           password_confirmation: '',
@@ -136,17 +153,17 @@ export function UserEditDialog({ open, onOpenChange, userId }: Props) {
       }
     }
     fetchData()
-  }, [open, userId])
+  }, [open, userId, canUse])
 
   const onSubmit = async (values: UserForm) => {
     if (!userId) return
     const { dirtyFields } = form.formState
     const payload: any = {}
-    ;(
-      ['nombre', 'apellido', 'usuario', 'email', 'empresaId', 'rolId'] as const
-    ).forEach((k) => {
-      if (dirtyFields[k]) (payload as any)[k] = (values as any)[k]
-    })
+    ;(['nombre', 'apellido', 'usuario', 'email', 'rolId'] as const).forEach(
+      (k) => {
+        if (dirtyFields[k]) (payload as any)[k] = (values as any)[k]
+      }
+    )
     if (values.password) {
       payload.password = values.password
       payload.password_confirmation = values.password_confirmation
@@ -167,12 +184,16 @@ export function UserEditDialog({ open, onOpenChange, userId }: Props) {
 
   const isDirty = Object.keys(form.formState.dirtyFields).length > 0
 
+  if (!canUse) return null
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='sm:max-w-lg'>
         <DialogHeader className='text-left'>
-          <DialogTitle>Editar usuario</DialogTitle>
-          <DialogDescription>Actualiza los datos del usuario</DialogDescription>
+          <DialogTitle>Editar usuario (Admin)</DialogTitle>
+          <DialogDescription>
+            Actualiza los datos del usuario (empresa fija).
+          </DialogDescription>
         </DialogHeader>
 
         {/* {loading && (
@@ -182,7 +203,7 @@ export function UserEditDialog({ open, onOpenChange, userId }: Props) {
         <div className='-mr-4 h-[28rem] w-full overflow-y-auto py-1 pr-4'>
           <Form {...form}>
             <form
-              id='user-edit-form'
+              id='user-edit-admin-form'
               onSubmit={form.handleSubmit(onSubmit)}
               className='space-y-4 p-0.5'
             >
@@ -241,30 +262,8 @@ export function UserEditDialog({ open, onOpenChange, userId }: Props) {
                   </FormItem>
                 )}
               />
-              <div className='grid grid-cols-2 gap-4'>
-                <FormField
-                  control={form.control}
-                  name='empresaId'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Empresa</FormLabel>
-                      <SelectDropdown
-                        placeholder='Selecciona empresa'
-                        defaultValue={field.value?.toString() || ''}
-                        onValueChange={(v) =>
-                          field.onChange(parseInt(v) || null)
-                        }
-                        items={companies.map((c) => ({
-                          value: c.id.toString(),
-                          label: c.nombre,
-                        }))}
-                        isPending={loading}
-                        isControlled
-                      />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              {/* Empresa FIJA (no editable para admin) */}
+              <div className='grid grid-cols-1 gap-4'>
                 <FormField
                   control={form.control}
                   name='rolId'
@@ -277,7 +276,7 @@ export function UserEditDialog({ open, onOpenChange, userId }: Props) {
                         onValueChange={(v) =>
                           field.onChange(parseInt(v) || null)
                         }
-                        items={roles.map((r) => ({
+                        items={roles.map((r: Role) => ({
                           value: r.id.toString(),
                           label: r.codigo,
                         }))}
@@ -328,7 +327,7 @@ export function UserEditDialog({ open, onOpenChange, userId }: Props) {
         <DialogFooter>
           <Button
             type='submit'
-            form='user-edit-form'
+            form='user-edit-admin-form'
             disabled={loading || saving || !isDirty}
           >
             {saving ? 'Guardando...' : 'Guardar cambios'}
