@@ -59,18 +59,19 @@ export function TableToolbar<TData>({
 
         {/* ──────── Filtros facetados ──────── */}
         <div className='flex gap-x-2'>
-          {filters.map(
-            ({ columnId, title, options }) =>
-              table.getColumn(columnId) && (
-                <TableFacetedFilter
-                  table={table}
-                  key={columnId}
-                  column={table.getColumn(columnId)}
-                  title={title}
-                  options={options}
-                />
-              )
-          )}
+          {filters.map(({ columnId, title, options }) => {
+            const column = table.getColumn(columnId)
+            if (!column) return null
+            return (
+              <TableFacetedFilter
+                table={table}
+                key={columnId}
+                column={column}
+                title={title}
+                options={options}
+              />
+            )
+          })}
         </div>
 
         {/* ──────── Botón “limpiar” ──────── */}

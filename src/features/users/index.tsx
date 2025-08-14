@@ -24,25 +24,26 @@ const actions = [
 
 const filterToolbar = {
   search: { columnId: 'usuario', placeholder: 'Filtrar usuarios…' },
+
   filters: [
     {
-      columnId: 'estado',
+      columnId: 'activo',
       title: 'Estado',
       options: [
-        { label: 'Activo', value: 'activo' },
-        { label: 'Inactivo', value: 'inactivo' },
+        { label: 'Activo', value: true },
+        { label: 'Inactivo', value: false },
       ],
     },
-    {
-      columnId: 'roles',
-      title: 'Roles',
-      options: [
-        { label: 'Paciente', value: 'Paciente' },
-        { label: 'Doctor', value: 'Doctor' },
-        { label: 'Recepcionista', value: 'Recepcionista' },
-        { label: 'Admin', value: 'Admin' },
-      ],
-    },
+    // {
+    //   columnId: 'roles',
+    //   title: 'Roles',
+    //   options: [
+    //     { label: 'Paciente', value: 'Paciente' },
+    //     { label: 'Doctor', value: 'Doctor' },
+    //     { label: 'Recepcionista', value: 'Recepcionista' },
+    //     { label: 'Admin', value: 'Admin' },
+    //   ],
+    // },
   ],
 }
 
