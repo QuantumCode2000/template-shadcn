@@ -3,7 +3,7 @@ import HeaderMain from '@/components/header-main'
 import { Main } from '@/components/layout/main'
 import { TableHeader } from '@/components/table/header/table-header'
 import { TableData } from '@/components/table/table-data'
-import { columns, CompaniesProvider } from './components/users-columns'
+import { columns } from './components/users-columns'
 import { UsersDialogs } from './components/users-dialogs'
 // import { UsersDialogType, useUsers } from './context/users-context'
 import { UsersProvider } from './context/users-context'
@@ -24,26 +24,26 @@ const actions = [
 
 const filterToolbar = {
   search: { columnId: 'usuario', placeholder: 'Filtrar usuarios…' },
-
+  asyncSelectFilters: [
+    {
+      columnId: 'empresa',
+      endpoint: '/empresas',
+      placeholder: 'Empresa…',
+      searchParam: 'nombre[lk]',
+      minChars: 1,
+      debounceMs: 400,
+      mapItem: (it: any) => ({ value: String(it.id), label: it.nombre }),
+    },
+  ],
   filters: [
     {
       columnId: 'activo',
       title: 'Estado',
       options: [
-        { label: 'Activo', value: true },
-        { label: 'Inactivo', value: false },
+        { label: 'Activo', value: 'Activo' },
+        { label: 'Inactivo', value: 'Inactivo' },
       ],
     },
-    // {
-    //   columnId: 'roles',
-    //   title: 'Roles',
-    //   options: [
-    //     { label: 'Paciente', value: 'Paciente' },
-    //     { label: 'Doctor', value: 'Doctor' },
-    //     { label: 'Recepcionista', value: 'Recepcionista' },
-    //     { label: 'Admin', value: 'Admin' },
-    //   ],
-    // },
   ],
 }
 
@@ -51,7 +51,7 @@ export default function Users() {
   const { data, isLoading } = useUsers()
   const { setOpen } = useUsersUI()
   return (
-    <CompaniesProvider>
+    <>
       <HeaderMain />
       <Main>
         <TableHeader
@@ -77,6 +77,6 @@ export default function Users() {
         </div>
       </Main>
       <UsersDialogs />
-    </CompaniesProvider>
+    </>
   )
 }

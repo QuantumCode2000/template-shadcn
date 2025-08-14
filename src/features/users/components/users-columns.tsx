@@ -1,12 +1,4 @@
-import {
-  useEffect,
-  useState,
-  createContext,
-  useContext,
-  ReactNode,
-} from 'react'
 import { ColumnDef } from '@tanstack/react-table'
-import apiService from '@/lib/apiService'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -14,35 +6,7 @@ import { TableColumnHeader } from '@/components/table/table-column-header'
 import { User } from '../data/schema'
 import { DataTableRowActions } from './users-actions'
 
-// Contexto para las empresas
-interface CompaniesContextType {
-  companies: Record<number, string>
-  loading: boolean
-}
-
-const CompaniesContext = createContext<CompaniesContextType>({
-  companies: {},
-  loading: true,
-})
-
-// Provider de empresas
-export const CompaniesProvider = ({ children }: { children: ReactNode }) => {
-  const [companies, setCompanies] = useState<Record<number, string>>({})
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {}, [])
-
-  return (
-    <CompaniesContext.Provider value={{ companies, loading }}>
-      {children}
-    </CompaniesContext.Provider>
-  )
-}
-
-// Hook para usar las empresas
-const useCompanies = () => {
-  return useContext(CompaniesContext)
-}
+// (Se eliminó contexto de empresas no utilizado)
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -103,6 +67,17 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => (
       <div>{row.original.empresa?.nombre ?? 'Sin empresa'}</div>
     ),
+    // Permitir filtrar por id (string) proveniente del filtro asíncrono
+    filterFn: (row, _id, filterValue) => {
+      if (!filterValue) return true
+      const empresaId = row.original.empresa?.id
+      if (!empresaId) return false
+      // filterValue es string único (asyncSelect) o array (facet clásico)
+      if (Array.isArray(filterValue)) {
+        return filterValue.includes(String(empresaId))
+      }
+      return String(empresaId) === String(filterValue)
+    },
   },
 
   {

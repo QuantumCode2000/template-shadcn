@@ -291,8 +291,13 @@ const getNavigationByRole = (userRole: number): NavGroup[] => {
         items: [
           {
             title: 'Usuarios & Roles',
-            url: '/app/usuarios',
+            url: '/users',
             icon: IconUserCog,
+          },
+          {
+            title: 'Sucursales',
+            url: '/subsidiaries',
+            icon: IconBuildingStore,
           },
           {
             title: 'Plantillas PDF',
