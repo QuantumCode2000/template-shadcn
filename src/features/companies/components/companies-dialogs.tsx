@@ -10,15 +10,11 @@ export function CompaniesDialogs() {
   const { deleteCompany } = useCompanies()
 
   /* callback genérico para todos los diálogos */
-  const handleChange =
-    (type: 'add' | 'edit' | 'view' | 'delete') => (v: boolean) => {
-      if (v) {
-        // el propio botón externo ya dejó open en 'add' / 'edit' / etc
-        return
-      }
-      setOpen(null) // ✔️ cierra
-      setCurrentRow(null) // ✔️ limpia fila
-    }
+  const handleChange = () => (v: boolean) => {
+    if (v) return // el botón externo ya gestionó abrir
+    setOpen(null)
+    setCurrentRow(null)
+  }
 
   const handleDelete = async () => {
     if (currentRow) {
@@ -37,27 +33,27 @@ export function CompaniesDialogs() {
       {/* Crear */}
       <CompanyCreateDialog
         open={open === 'add'}
-        onOpenChange={handleChange('add')}
+        onOpenChange={handleChange()}
       />
 
       {/* Ver detalles */}
       <CompanyViewDialog
         open={open === 'view'}
-        onOpenChange={handleChange('view')}
+        onOpenChange={handleChange()}
         company={currentRow}
       />
 
       {/* Editar */}
       <CompanyEditDialog
         open={open === 'edit'}
-        onOpenChange={handleChange('edit')}
+        onOpenChange={handleChange()}
         company={currentRow}
       />
 
       {/* Eliminar */}
       <CompanyDeleteDialog
         open={open === 'delete'}
-        onOpenChange={handleChange('delete')}
+        onOpenChange={handleChange()}
         company={currentRow}
         onConfirm={handleDelete}
       />

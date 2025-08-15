@@ -64,14 +64,14 @@ export function CompanyEditDialog({
   useEffect(() => {
     if (company && open) {
       form.reset({
-        codigo: company.codigo,
-        nombre: company.nombre,
-        descripcion: company.descripcion,
-        nit: company.nit,
-        codigoSistemaSin: company.codigoSistemaSin,
-        codigoAmbienteSin: company.codigoAmbienteSin,
-        codigoModalidadSin: company.codigoModalidadSin,
-        tokenDelegado: company.tokenDelegado,
+        codigo: String(company.codigo ?? ''),
+        nombre: String(company.nombre ?? ''),
+        descripcion: String(company.descripcion ?? ''),
+        nit: company.nit ?? undefined,
+        codigoSistemaSin: String(company.codigoSistemaSin ?? ''),
+        codigoAmbienteSin: company.codigoAmbienteSin ?? 1,
+        codigoModalidadSin: company.codigoModalidadSin ?? 1,
+        tokenDelegado: String(company.tokenDelegado ?? ''),
       })
     }
   }, [company, open, form])
@@ -164,8 +164,16 @@ export function CompanyEditDialog({
                     <Input
                       type='number'
                       placeholder='51441111'
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      value={field.value === undefined ? '' : field.value}
+                      onChange={(e) => {
+                        const val = e.target.value
+                        if (val === '') {
+                          field.onChange(undefined as any)
+                          return
+                        }
+                        const num = Number(val)
+                        field.onChange(isNaN(num) ? undefined : num)
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

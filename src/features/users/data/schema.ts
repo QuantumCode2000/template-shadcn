@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import { fa } from '@faker-js/faker'
 
 /* =========================
    Sub-esquemas de respuesta

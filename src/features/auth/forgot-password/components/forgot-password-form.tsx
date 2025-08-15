@@ -31,7 +31,7 @@ export function ForgotPasswordForm({ className, ...props }: ForgotFormProps) {
     defaultValues: { email: '' },
   })
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  function onSubmit(_: z.infer<typeof formSchema>) {
     setIsLoading(true)
 
     setTimeout(() => {

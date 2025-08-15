@@ -1,0 +1,25 @@
+services:
+  frontend:
+    # Construye la imagen a partir del Dockerfile que te pasé
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # Si necesitas pasar variables de build (por ej. URLs):
+      args:
+        VITE_API_URL: "https://facturacion.oncoclinicbolivia.com/api/v1"
+    container_name: facturacion-fe
+    restart: unless-stopped        # se reinicia salvo que lo detengas a mano
+    ports:
+      - "8080:80"                  # host:container  (Nginx sirve en 80)
+    environment:
+      # Ejemplos de vars de runtime (no afectan al build estático)
+      - NODE_ENV=production
+
+    # Si tu app necesita acceder a un backend definido en la misma red,
+    # basta con llamar al nombre del servicio (p.e. http://backend:3000)
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge

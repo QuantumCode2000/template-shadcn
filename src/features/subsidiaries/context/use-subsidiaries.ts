@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { type NewSubsidiary, type UpdateSubsidiary } from '../data/schema'
+import { type UpdateSubsidiary } from '../data/schema'
 import { subsidiariesApi } from '../lib/subsidiaries-service'
 
 export const useSubsidiaries = () => {

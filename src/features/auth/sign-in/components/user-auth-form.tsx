@@ -64,7 +64,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
         // Guarda token y usuario
         useAuthStore.getState().auth.setAccessToken(token)
-        useAuthStore.getState().auth.setUser(userData)
+        // useAuthStore.getState().auth.setUser(userData)
         localStorage.setItem('authToken', token)
 
         navigate({ to: '/' })

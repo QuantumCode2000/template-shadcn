@@ -256,11 +256,11 @@ export function UserCreateDialog({ open, onOpenChange }: Props) {
                     </FormDescription>
                     <SelectDropdown
                       placeholder='Selecciona una empresa'
+                      defaultValue={field.value?.toString() || ''}
                       items={companies.map((empresa) => ({
                         value: empresa.id.toString(),
                         label: empresa.nombre,
                       }))}
-                      defaultValue={field.value?.toString() || ''}
                       onValueChange={(value) =>
                         field.onChange(parseInt(value) || 0)
                       }

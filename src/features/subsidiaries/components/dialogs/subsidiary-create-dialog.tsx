@@ -56,12 +56,12 @@ export function SubsidiaryCreateDialog({ open, onOpenChange }: Props) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       empresaId: 0,
-      codigo: 0,
+      codigo: undefined as any,
       nombre: '',
       municipio: '',
       direccion: '',
-      telefono: 0,
-      codigoSin: 0,
+      telefono: undefined as any,
+      codigoSin: undefined as any,
     },
   })
 
@@ -152,10 +152,14 @@ export function SubsidiaryCreateDialog({ open, onOpenChange }: Props) {
                         <Input
                           type='number'
                           placeholder='1400'
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
+                          value={field.value === undefined ? '' : field.value}
+                          onChange={(e) => {
+                            const val = e.target.value
+                            if (val === '')
+                              return field.onChange(undefined as any)
+                            const num = Number(val)
+                            field.onChange(isNaN(num) ? undefined : num)
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -223,10 +227,14 @@ export function SubsidiaryCreateDialog({ open, onOpenChange }: Props) {
                         <Input
                           type='number'
                           placeholder='22785566'
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
+                          value={field.value === undefined ? '' : field.value}
+                          onChange={(e) => {
+                            const val = e.target.value
+                            if (val === '')
+                              return field.onChange(undefined as any)
+                            const num = Number(val)
+                            field.onChange(isNaN(num) ? undefined : num)
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -245,10 +253,14 @@ export function SubsidiaryCreateDialog({ open, onOpenChange }: Props) {
                         <Input
                           type='number'
                           placeholder='2'
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
+                          value={field.value === undefined ? '' : field.value}
+                          onChange={(e) => {
+                            const val = e.target.value
+                            if (val === '')
+                              return field.onChange(undefined as any)
+                            const num = Number(val)
+                            field.onChange(isNaN(num) ? undefined : num)
+                          }}
                         />
                       </FormControl>
                       <FormMessage />

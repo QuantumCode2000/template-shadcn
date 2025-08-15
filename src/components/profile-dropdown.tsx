@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useRouter } from '@tanstack/react-router'
+import { useRouter } from '@tanstack/react-router'
 import { useAuthStore } from '@/stores/authStore'
 import { decodeToken, type DecodedToken } from '@/lib/jwtUtils'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -17,7 +16,7 @@ import {
 
 export function ProfileDropdown() {
   const [userInfo, setUserInfo] = useState<DecodedToken | null>(null)
-  const { user, accessToken, reset } = useAuthStore((state) => state.auth)
+  const { accessToken, reset } = useAuthStore((state) => state.auth)
   const router = useRouter()
 
   useEffect(() => {

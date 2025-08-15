@@ -27,26 +27,23 @@ const filterToolbar = {
       columnId: 'activo',
       title: 'Estado',
       options: [
-        { label: 'Activo', value: true },
-        { label: 'Inactivo', value: false },
+        { label: 'Activo', value: 'true' },
+        { label: 'Inactivo', value: 'false' },
       ],
     },
     {
       columnId: 'codigoAmbienteSin',
       title: 'Ambiente SIN',
       options: [
-        { label: 'Producción', value: 1 },
-        { label: 'Pruebas y Piloto', value: 2 },
-        // { label: 'Desarrollo', value: 3 },
-        // { label: 'Capacitación', value: 4 },
+        { label: 'Producción', value: '1' },
+        { label: 'Pruebas y Piloto', value: '2' },
       ],
     },
   ],
 }
 
 export default function Companies() {
-  const { data, isLoading } = useCompanies()
-  const { setOpen } = useCompaniesUI()
+  const { data } = useCompanies()
   return (
     <>
       <HeaderMain />
@@ -64,7 +61,13 @@ export default function Companies() {
         <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
           <TableData
             columns={columns}
-            useData={() => data}
+            data={
+              Array.isArray((data as any)?.data)
+                ? (data as any).data
+                : Array.isArray(data)
+                  ? (data as any)
+                  : []
+            }
             toolbar={filterToolbar}
           />
         </div>

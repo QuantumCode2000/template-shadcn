@@ -1,49 +1,11 @@
 import {
-  IconBarrierBlock,
-  IconBrowserCheck,
-  IconBug,
   IconBuilding,
-  IconChecklist,
-  IconError404,
-  IconHelp,
   IconLayoutDashboard,
-  IconLock,
-  IconLockAccess,
-  IconMessages,
-  IconNotification,
   IconPackages,
-  IconPalette,
-  IconServerOff,
-  IconSettings,
-  IconTool,
   IconUserCog,
-  IconUserOff,
   IconUsers,
   IconBuildingStore,
   IconFileInvoice,
-  IconReceipt,
-  IconFileText,
-  IconRefresh,
-  IconX,
-  IconSearch,
-  IconCash,
-  IconShieldCheck,
-  IconCertificate,
-  IconReport,
-  IconChartBar,
-  IconDatabase,
-  IconTemplate,
-  IconPlugConnected,
-  IconBell,
-  IconActivity,
-  IconCloud,
-  IconCreditCard,
-  IconHeadset,
-  IconEye,
-  IconClipboardList,
-  IconCalendar,
-  IconFileCheck,
-  IconAlertTriangle,
 } from '@tabler/icons-react'
 import { Command } from 'lucide-react'
 import { type DecodedToken } from '@/lib/jwtUtils'
@@ -66,98 +28,28 @@ const getNavigationByRole = (userRole: number): NavGroup[] => {
   if (isSuperAdmin(userRole)) {
     return [
       {
-        title: 'Panel de Control',
+        title: 'Administración SaaS',
         items: [
-          {
-            title: 'Dashboard Global',
-            url: '/admin',
-            icon: IconLayoutDashboard,
-          },
-          {
-            title: 'Empresas',
-            url: '/companies',
-            icon: IconBuilding,
-          },
-          {
-            title: 'Usuarios',
-            url: '/users',
-            icon: IconUsers,
-          },
+          // Rutas /admin* NO existen todavía -> comentadas
+          // { title: 'Dashboard Global', url: '/admin', icon: IconLayoutDashboard },
+          { title: 'Empresas', url: '/companies', icon: IconBuilding }, // existe
+          { title: 'Usuarios', url: '/users', icon: IconUsers }, // existe
           {
             title: 'Subsidiarias',
             url: '/subsidiaries',
             icon: IconBuildingStore,
-          },
-          {
-            title: 'Impersonar',
-            url: '/admin/impersonate',
-            icon: IconEye,
-          },
+          }, // existe
+          // { title: 'Impersonar', url: '/admin/impersonate', icon: IconEye },
         ],
       },
       {
-        title: 'Monitoreo & Operación',
+        title: 'Módulos Empresa',
         items: [
-          {
-            title: 'SIAT Monitor',
-            url: '/admin/siat/monitor',
-            icon: IconActivity,
-          },
-          {
-            title: 'Colas & Reintentos',
-            url: '/admin/queues',
-            icon: IconRefresh,
-          },
-          {
-            title: 'Logs & Auditoría',
-            url: '/admin/logs',
-            icon: IconFileText,
-          },
-          {
-            title: 'Salud de Servicios',
-            url: '/admin/health',
-            icon: IconShieldCheck,
-          },
-        ],
-      },
-      {
-        title: 'Catálogos & Config',
-        items: [
-          {
-            title: 'Catálogos Globales',
-            url: '/admin/catalogs',
-            icon: IconDatabase,
-          },
-          {
-            title: 'Ambientes SIAT',
-            url: '/admin/siat/env',
-            icon: IconCloud,
-          },
-          {
-            title: 'Certificados',
-            url: '/admin/certificates',
-            icon: IconCertificate,
-          },
-          {
-            title: 'Mantenimiento',
-            url: '/admin/maintenance',
-            icon: IconTool,
-          },
-        ],
-      },
-      {
-        title: 'Comercial',
-        items: [
-          {
-            title: 'Planes & Cobros',
-            url: '/admin/billing',
-            icon: IconCreditCard,
-          },
-          {
-            title: 'Soporte',
-            url: '/admin/support',
-            icon: IconHeadset,
-          },
+          { title: 'Productos', url: '/products', icon: IconPackages }, // existe
+          { title: 'Ventas', url: '/sales', icon: IconFileInvoice }, // existe
+          { title: 'Hacer Venta', url: '/sell', icon: IconFileInvoice }, // existe
+          { title: 'Puntos de Venta', url: '/pos', icon: IconBuildingStore }, // existe
+          { title: 'Clientes', url: '/customers', icon: IconUsers }, // existe
         ],
       },
     ]
@@ -166,154 +58,24 @@ const getNavigationByRole = (userRole: number): NavGroup[] => {
   // Admin de Empresa (rolId: 2) - Configuración SIAT y administración
   if (isAdminOrSuperAdmin(userRole) && userRole === USER_ROLES.ADMIN) {
     return [
-      {
-        title: 'Inicio',
-        items: [
-          {
-            title: 'Dashboard',
-            url: '/app',
-            icon: IconLayoutDashboard,
-          },
-        ],
-      },
-      {
-        title: 'Operación (Facturación)',
-        items: [
-          {
-            title: 'Emitir Factura',
-            url: '/app/facturar',
-            icon: IconFileInvoice,
-          },
-          {
-            title: 'Recepción por Paquete',
-            url: '/app/paquetes',
-            icon: IconPackages,
-          },
-          {
-            title: 'Borradores',
-            url: '/app/borradores',
-            icon: IconFileText,
-          },
-          {
-            title: 'Notas C/D',
-            url: '/app/notas',
-            icon: IconReceipt,
-          },
-          {
-            title: 'Anulaciones',
-            url: '/app/anulaciones',
-            icon: IconX,
-          },
-          {
-            title: 'Contingencia',
-            url: '/app/contingencia',
-            icon: IconAlertTriangle,
-          },
-          {
-            title: 'Seguimiento de Envíos',
-            url: '/app/envios',
-            icon: IconSearch,
-          },
-        ],
-      },
-      {
-        title: 'Maestros',
-        items: [
-          {
-            title: 'Clientes',
-            url: '/app/clientes',
-            icon: IconUsers,
-          },
-          {
-            title: 'Productos/Servicios',
-            url: '/app/items',
-            icon: IconClipboardList,
-          },
-          {
-            title: 'Sucursales & PDV',
-            url: '/app/sucursales',
-            icon: IconBuildingStore,
-          },
-        ],
-      },
-      {
-        title: 'SIAT (Admin)',
-        items: [
-          {
-            title: 'CUIS/CUFD',
-            url: '/app/siat/credenciales',
-            icon: IconShieldCheck,
-          },
-          {
-            title: 'Sincronizaciones',
-            url: '/app/siat/sync',
-            icon: IconRefresh,
-          },
-          {
-            title: 'Eventos Significativos',
-            url: '/app/siat/eventos',
-            icon: IconBell,
-          },
-          {
-            title: 'Certificados Digitales',
-            url: '/app/siat/certificados',
-            icon: IconCertificate,
-          },
-        ],
-      },
-      {
-        title: 'Reportes',
-        items: [
-          {
-            title: 'Libro de Ventas IVA',
-            url: '/app/reportes/libro-ventas',
-            icon: IconReport,
-          },
-          {
-            title: 'KPIs de Venta',
-            url: '/app/reportes/kpis',
-            icon: IconChartBar,
-          },
-          {
-            title: 'Estados de Envío',
-            url: '/app/reportes/envios',
-            icon: IconFileCheck,
-          },
-          {
-            title: 'Export Contable',
-            url: '/app/reportes/contabilidad',
-            icon: IconCalendar,
-          },
-        ],
-      },
+      // Secciones /app* NO implementadas aún -> comentadas para no mostrar enlaces rotos
       {
         title: 'Administración',
         items: [
-          {
-            title: 'Usuarios & Roles',
-            url: '/users',
-            icon: IconUserCog,
-          },
+          { title: 'Usuarios & Roles', url: '/users', icon: IconUserCog },
           {
             title: 'Sucursales',
             url: '/subsidiaries',
             icon: IconBuildingStore,
           },
-          {
-            title: 'Plantillas PDF',
-            url: '/app/plantillas',
-            icon: IconTemplate,
-          },
-          {
-            title: 'Integraciones',
-            url: '/app/integraciones',
-            icon: IconPlugConnected,
-          },
-          {
-            title: 'Configuración Empresa',
-            url: '/app/config',
-            icon: IconSettings,
-          },
+          { title: 'Productos', url: '/products', icon: IconPackages },
+          { title: 'Ventas', url: '/sales', icon: IconFileInvoice },
+          { title: 'Hacer Venta', url: '/sell', icon: IconFileInvoice },
+          { title: 'Puntos de Venta', url: '/pos', icon: IconBuildingStore },
+          { title: 'Clientes', url: '/customers', icon: IconUsers },
+          // { title: 'Plantillas PDF', url: '/app/plantillas', icon: IconTemplate },
+          // { title: 'Integraciones', url: '/app/integraciones', icon: IconPlugConnected },
+          // { title: 'Configuración Empresa', url: '/app/config', icon: IconSettings },
         ],
       },
     ]
@@ -323,73 +85,13 @@ const getNavigationByRole = (userRole: number): NavGroup[] => {
   if (userRole === USER_ROLES.INVOICER) {
     return [
       {
-        title: 'Trabajo Diario',
+        title: 'Operación Básica',
         items: [
-          {
-            title: 'Inicio',
-            url: '/app',
-            icon: IconLayoutDashboard,
-          },
-          {
-            title: 'Emitir Factura',
-            url: '/app/facturar',
-            icon: IconFileInvoice,
-          },
-          {
-            title: 'Borradores',
-            url: '/app/borradores',
-            icon: IconFileText,
-          },
-          {
-            title: 'Notas C/D',
-            url: '/app/notas',
-            icon: IconReceipt,
-          },
-          {
-            title: 'Anulaciones',
-            url: '/app/anulaciones',
-            icon: IconX,
-          },
-          {
-            title: 'Seguimiento',
-            url: '/app/envios',
-            icon: IconSearch,
-          },
-        ],
-      },
-      {
-        title: 'Maestros (Limitado)',
-        items: [
-          {
-            title: 'Clientes',
-            url: '/app/clientes',
-            icon: IconUsers,
-          },
-          {
-            title: 'Productos/Servicios',
-            url: '/app/items',
-            icon: IconClipboardList,
-          },
-        ],
-      },
-      {
-        title: 'Caja (Opcional)',
-        items: [
-          {
-            title: 'Caja Diaria',
-            url: '/app/caja',
-            icon: IconCash,
-          },
-        ],
-      },
-      {
-        title: 'Mi Cuenta',
-        items: [
-          {
-            title: 'Mi Actividad',
-            url: '/app/mis-emisiones',
-            icon: IconActivity,
-          },
+          // Secciones /app* no implementadas -> omitidas
+          { title: 'Ventas', url: '/sales', icon: IconFileInvoice },
+          { title: 'Hacer Venta', url: '/sell', icon: IconFileInvoice },
+          { title: 'Clientes', url: '/customers', icon: IconUsers },
+          { title: 'Productos', url: '/products', icon: IconPackages },
         ],
       },
     ]

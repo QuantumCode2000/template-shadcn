@@ -46,7 +46,7 @@ export function CompanyCreateDialog({
       codigo: '',
       nombre: '',
       descripcion: '',
-      nit: 0,
+      nit: undefined as any,
       codigoSistemaSin: '',
       codigoAmbienteSin: 1,
       codigoModalidadSin: 1,
@@ -139,8 +139,16 @@ export function CompanyCreateDialog({
                     <Input
                       type='number'
                       placeholder='51441111'
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      value={field.value === undefined ? '' : field.value}
+                      onChange={(e) => {
+                        const val = e.target.value
+                        if (val === '') {
+                          field.onChange(undefined as any)
+                          return
+                        }
+                        const num = Number(val)
+                        field.onChange(isNaN(num) ? undefined : num)
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
